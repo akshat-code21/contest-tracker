@@ -6,6 +6,13 @@
 @theme {
   --color-icon: #283e70;
   --color-subtitle: #808897;
+  --color-cf: #1990ff;
+  --color-cf-primary: #0050b3;
+  --color-cf-secondary: #e6f6ff;
+  --color-lc-primary: #d48809;
+  --color-lc-secondary: #fff7e6;
+  --color-cc-secondary: #f5f0eb;
+  --color-cc-primary: #3c2e25;
 }
 @theme inline {
   --color-background: var(--background);
