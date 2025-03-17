@@ -13,6 +13,12 @@
   --color-lc-secondary: #fff7e6;
   --color-cc-secondary: #f5f0eb;
   --color-cc-primary: #3c2e25;
+  --color-upcoming-primary: #1e41af;
+  --color-upcoming-secondary: #dbe9fe;
+  --color-completed-primary: #1f2937;
+  --color-completed-secondary: #f3f4f6;
+  --color-ongoing-primary: #166434;
+  --color-ongoing-secondary: #dcfce6;
 }
 @theme inline {
   --color-background: var(--background);
