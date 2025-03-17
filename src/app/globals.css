@@ -9,8 +9,10 @@
   --color-cf: #1990ff;
   --color-cf-primary: #0050b3;
   --color-cf-secondary: #e6f6ff;
+  --color-lc : #FFA015;
   --color-lc-primary: #d48809;
   --color-lc-secondary: #fff7e6;
+  --color-cc : #5B4638;
   --color-cc-secondary: #f5f0eb;
   --color-cc-primary: #3c2e25;
   --color-upcoming-primary: #1e41af;
@@ -19,6 +21,7 @@
   --color-completed-secondary: #f3f4f6;
   --color-ongoing-primary: #166434;
   --color-ongoing-secondary: #dcfce6;
+  --color-inactive: #f2f5f7;
 }
 @theme inline {
   --color-background: var(--background);

@@ -24,6 +24,19 @@ export default function ContestCard({ contests }: { contests: Contest[] }) {
         return "bg-gray-200 text-gray-700";
     }
   };
+  const checkPlatformForBg = (platform: string): string => {
+    switch (platform) {
+      case "codeforces":
+        return "bg-cf-primary";
+      case "codechef":
+        return "bg-cc-primary";
+      case "leetcode":
+        return "bg-lc-primary";
+      default:
+        return "bg-gray-200 ";
+    }
+  };
+
   const checkStatus = (status: string) => {
     switch (status) {
       case "upcoming":
@@ -41,8 +54,20 @@ export default function ContestCard({ contests }: { contests: Contest[] }) {
       {contests?.length > 0 ? (
         contests.map((contest: Contest) => {
           return (
-            <Card key={contest.id} className="flex flex-col items-start w-full">
+            <Card
+              key={contest.id}
+              className={cn("flex flex-col items-start w-full relative group")}
+            >
+              <div
+                className={cn(
+                  "absolute top-0 left-0 right-0 h-1 rounded-t-xl",
+                  checkPlatformForBg(contest.platform.toLowerCase()),
+                  "transition-all duration-300",
+                  "group-hover:h-2.5"
+                )}
+              />
               <CardHeader className="flex flex-col w-full">
+                <div className={cn("w-full h-3")}></div>
                 <div className="flex justify-between items-center w-full">
                   <div
                     className={cn(
@@ -91,7 +116,9 @@ export default function ContestCard({ contests }: { contests: Contest[] }) {
           );
         })
       ) : (
-        <div>Not found</div>
+        <div className="flex justify-center items-center text-4xl absolute mx-auto top-1/2 left-[40%]">
+          No Contests Found.
+        </div>
       )}
     </div>
   );
