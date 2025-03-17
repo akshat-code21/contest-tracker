@@ -9,7 +9,13 @@ export default async function Home() {
     const response = await axios.get("http://localhost:3000/api/codechef");
     return response.data;
   };
-  const contests = await fetchCodeChefContests();
+  const fetchCodeForcesContests = async()=>{
+    const response = await axios.get('http://localhost:3000/api/codeforces');
+    return response.data;
+  }
+  const codechefContests = await fetchCodeChefContests();
+  const codeforcesContests = await fetchCodeForcesContests();
+  const contests = [...codechefContests,...codeforcesContests]
   return (
     <div className="font-[family-name:var(--font-geist-sans)] min-h-screen">
       <div className="my-8 sm:my-12">
