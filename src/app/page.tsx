@@ -26,16 +26,20 @@ export default async function Home(props: { params: PageParams }) {
   let contests: Contest[] = [];
 
   try {
+    const baseUrl = process.env.VERCEL_URL 
+      ? `https://${process.env.VERCEL_URL}` 
+      : 'http://localhost:3000';
+
     if (!platform || platform === "all platforms") {
       const [codechefData, codeforcesData, leetcodeData] = await Promise.all([
-        axios.get("/api/codechef").then((res) => res.data),
-        axios.get("/api/codeforces").then((res) => res.data),
-        axios.get("/api/leetcode").then((res) => res.data),
+        fetch(`${baseUrl}/api/codechef`).then((res) => res.json()),
+        fetch(`${baseUrl}/api/codeforces`).then((res) => res.json()),
+        fetch(`${baseUrl}/api/leetcode`).then((res) => res.json()),
       ]);
       contests = [...codechefData, ...codeforcesData, ...leetcodeData];
     } else {
-      const response = await axios.get(`/api/${platform}`);
-      contests = response.data;
+      const response = await fetch(`${baseUrl}/api/${platform}`);
+      contests = await response.json();
     }
 
     if (searchQuery) {

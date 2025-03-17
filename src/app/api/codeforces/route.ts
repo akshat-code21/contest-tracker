@@ -1,5 +1,5 @@
 import parseDateString from "@/lib/parseDateString";
-import axios from "axios";
+
 interface CodeForcesContests {
   id: number;
   name: string;
@@ -7,10 +7,15 @@ interface CodeForcesContests {
   durationSeconds: number;
   startTimeSeconds: number;
 }
+
 export async function GET() {
   try {
-    const response = await axios.get("https://codeforces.com/api/contest.list");
-    const result = response.data.result;
+    const response = await fetch("https://codeforces.com/api/contest.list");
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    const result = data.result;
 
     const futureContests = result.filter(
       (contest: CodeForcesContests) => contest.phase === "BEFORE"

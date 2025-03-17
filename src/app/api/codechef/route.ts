@@ -1,4 +1,3 @@
-import axios from "axios";
 import parseDateString from "@/lib/parseDateString";
 import parseDuration from "@/lib/parseDuration";
 interface CodeChefContest {
@@ -8,12 +7,13 @@ interface CodeChefContest {
   contest_duration: string;
 }
 export async function GET() {
-  const response = await axios.get(
+  const response = await fetch(
     "https://www.codechef.com/api/list/contests/all?sort_by=START&sorting_order=asc&offset=0&mode=all"
   );
-  const futureContests = response.data.future_contests;
-  const presentContests = response.data.present_contests;
-  const pastContests = response.data.past_contests;
+  const data = await response.json();
+  const futureContests = data.future_contests;
+  const presentContests = data.present_contests;
+  const pastContests = data.past_contests;
 
   const getFormattedContest = (contest: CodeChefContest, status: string) => ({
     id: contest.contest_code,

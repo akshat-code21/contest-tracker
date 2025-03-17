@@ -1,16 +1,21 @@
 import parseDateString from "@/lib/parseDateString";
-import axios from "axios";
+
 interface LeetCodeContests {
   title: string;
   duration: number;
   startTime: number;
 }
+
 export async function GET() {
   try {
-    const response = await axios.get(
+    const response = await fetch(
       "https://competeapi.vercel.app/contests/leetcode/"
     );
-    const result = response.data.data.topTwoContests;
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    const result = data.data.topTwoContests;
 
     const getFormattedContest = (
       contest: LeetCodeContests,
