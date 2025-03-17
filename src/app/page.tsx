@@ -23,23 +23,34 @@ export default async function Home({
     return response.data;
   };
 
+  const fetchLeetCodeContests = async () => {
+    const response = await axios.get("http://localhost:3000/api/leetcode");
+    return response.data;
+  };
+
   let contests: Contest[] = [];
 
   if (!platform || platform === "all platforms") {
-    const [codechefData, codeforcesData] = await Promise.all([
+    const [codechefData, codeforcesData,leetcodeData] = await Promise.all([
       fetchCodeChefContests(),
       fetchCodeForcesContests(),
+      fetchLeetCodeContests(),
     ]);
-    contests = [...codechefData, ...codeforcesData];
+    contests = [...codechefData, ...codeforcesData,...leetcodeData];
   } else if (platform === "codechef") {
     contests = await fetchCodeChefContests();
   } else if (platform === "codeforces") {
     contests = await fetchCodeForcesContests();
+  } else if (platform === "leetcode") {
+    contests = await fetchLeetCodeContests();
   }
 
   if (searchQuery) {
-    contests = contests.filter((contest) =>
-      contest.name.toLowerCase().includes(searchQuery.toLowerCase()) || contest.platform.toLowerCase().includes(searchQuery.toLowerCase()) || contest.id.toString().includes(searchQuery.toString())
+    contests = contests.filter(
+      (contest) =>
+        contest.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        contest.platform.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        contest.id.toString().includes(searchQuery.toString())
     );
   }
 

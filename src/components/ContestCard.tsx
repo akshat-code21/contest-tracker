@@ -57,7 +57,7 @@ export default function ContestCard({ contests }: { contests: Contest[] }) {
         contests.map((contest: Contest) => {
           return (
             <Card
-              key={contest.id}
+              key={contest.name}
               className={cn("flex flex-col items-start w-full relative group")}
             >
               <div
