@@ -1,26 +1,30 @@
 "use client";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Input } from "./ui/input";
 import { Search } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { usePathname } from "next/navigation";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function ContestsSearch() {
-  const [inputVal, setInputVal] = useState("");
   const router = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [inputVal, setInputVal] = useState(searchParams.get("contest") || "");
 
   const createQueryString = useCallback(
-    (name: string, value: string) => {
+    (value: string) => {
       const params = new URLSearchParams(searchParams.toString());
-      if (value) {
-        params.set(name, value);
-      } else {
-        params.delete(name);
+      const platform = params.get("platform");
+
+      const newParams = new URLSearchParams();
+
+      if (platform) {
+        newParams.set("platform", platform);
       }
-      return params.toString();
+
+      if (value) {
+        newParams.set("contest", value);
+      }
+
+      return newParams.toString();
     },
     [searchParams]
   );
@@ -28,8 +32,17 @@ export default function ContestsSearch() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setInputVal(value);
-    router.push(`/?${createQueryString("contest", value)}`);
+    const queryString = createQueryString(value);
+    const url = queryString ? `/?${queryString}` : "/";
+    router.replace(url);
   };
+
+  useEffect(() => {
+    const contest = searchParams.get("contest");
+    if (contest) {
+      setInputVal(contest);
+    }
+  }, [searchParams]);
 
   return (
     <div className="relative w-full max-w-md mx-auto mb-8 px-4">

@@ -31,7 +31,7 @@ export default function PlatformFilters() {
   const platform = searchParams.get("platform");
   const isActive = (currPlatform: string) => {
     if (currPlatform === "all platforms") {
-      return !platform; 
+      return !platform;
     }
     return platform === currPlatform;
   };
@@ -62,17 +62,27 @@ export default function PlatformFilters() {
 
   const createQueryString = (newPlatform: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    if (newPlatform.toLowerCase() === "all platforms") {
-      params.delete("platform");
-    } else {
-      params.set("platform", newPlatform.toLowerCase());
+    const contest = params.get("contest");
+
+    const newParams = new URLSearchParams();
+
+    if (newPlatform.toLowerCase() !== "all platforms") {
+      newParams.set("platform", newPlatform.toLowerCase());
     }
-    return params.toString();
+
+    if (contest) {
+      newParams.set("contest", contest);
+    }
+
+    return newParams.toString();
   };
 
   return (
     <div className="flex items-center w-full justify-start md:justify-center gap-2 my-4 sm:my-8 px-4 overflow-x-auto no-scrollbar">
       {buttons.map((button) => {
+        const queryString = createQueryString(button.title);
+        const href = queryString ? `/?${queryString}` : "/";
+
         return (
           <div
             key={button.title}
@@ -87,7 +97,8 @@ export default function PlatformFilters() {
                     : `${fetchInActiveStyles(button.title.toLowerCase())}`
                 }`
               )}
-              href={`/?${createQueryString(button.title)}`}
+              href={href}
+              replace
             >
               <span className="text-xs font-bold">{button.icon}</span>
               <span className="font-medium">{button.title}</span>
