@@ -59,6 +59,17 @@ export default function PlatformFilters() {
         return "bg-inactive text-icon";
     }
   };
+
+  const createQueryString = (newPlatform: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (newPlatform.toLowerCase() === "all platforms") {
+      params.delete("platform");
+    } else {
+      params.set("platform", newPlatform.toLowerCase());
+    }
+    return params.toString();
+  };
+
   return (
     <div className="flex items-center w-full justify-start md:justify-center gap-2 my-4 sm:my-8 px-4 overflow-x-auto no-scrollbar">
       {buttons.map((button) => {
@@ -76,11 +87,7 @@ export default function PlatformFilters() {
                     : `${fetchInActiveStyles(button.title.toLowerCase())}`
                 }`
               )}
-              href={`${
-                button.title.toLowerCase() !== "all platforms"
-                  ? `/?platform=${button.title.toLowerCase()}`
-                  : "/"
-              }`}
+              href={`/?${createQueryString(button.title)}`}
             >
               <span className="text-xs font-bold">{button.icon}</span>
               <span className="font-medium">{button.title}</span>

@@ -11,19 +11,26 @@ export default function ContestsSearch() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
   const createQueryString = useCallback(
     (name: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString());
-      params.set(name, value);
-
+      if (value) {
+        params.set(name, value);
+      } else {
+        params.delete(name);
+      }
       return params.toString();
     },
     [searchParams]
   );
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputVal(e.target.value);
-    router.push(pathname + "?" + createQueryString("contest", e.target.value));
+    const value = e.target.value;
+    setInputVal(value);
+    router.push(`/?${createQueryString("contest", value)}`);
   };
+
   return (
     <div className="relative w-full max-w-md mx-auto mb-8 px-4">
       <div className="absolute inset-y-0 left-4 pl-3 flex items-center pointer-events-none">

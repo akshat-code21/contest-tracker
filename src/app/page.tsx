@@ -12,23 +12,25 @@ export const metadata: Metadata = {
   description: "Track programming contests from different platforms",
 };
 
-type PageParams = Promise<{
-  slug: string[];
-  searchParams: { [key: string]: string | string[] | undefined };
-}>;
+type PageProps = {
+  params: Promise<Record<string, never>>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
 
-export default async function Home(props: { params: PageParams }) {
-  const { searchParams } = await props.params;
-
-  const platform = searchParams?.platform as string | undefined;
-  const searchQuery = searchParams?.contest as string | undefined;
+export default async function Home({
+  params,
+  searchParams,
+}: PageProps) {
+  const searchParamsResolved = await searchParams;
+  const platform = searchParamsResolved?.platform?.toString().toLowerCase();
+  const searchQuery = searchParamsResolved?.contest?.toString();
 
   let contests: Contest[] = [];
 
   try {
-    const baseUrl = process.env.VERCEL_URL 
-      ? `https://${process.env.VERCEL_URL}` 
-      : 'http://localhost:3000';
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL
+      ? process.env.NEXT_PUBLIC_API_URL
+      : "http://localhost:3000";
 
     if (!platform || platform === "all platforms") {
       const [codechefData, codeforcesData, leetcodeData] = await Promise.all([
