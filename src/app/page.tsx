@@ -8,23 +8,23 @@ import { Contest } from "./types/contest";
 export default async function Home({
   searchParams,
 }: {
-  searchParams: { platform?: string };
+  searchParams: { platform?: string; contest?: string };
 }) {
   const params = await searchParams;
-  const platform = params.platform
-  
+  const platform = params.platform;
+  const searchQuery = params.contest;
   const fetchCodeChefContests = async () => {
     const response = await axios.get("http://localhost:3000/api/codechef");
     return response.data;
   };
-  
+
   const fetchCodeForcesContests = async () => {
     const response = await axios.get("http://localhost:3000/api/codeforces");
     return response.data;
   };
 
   let contests: Contest[] = [];
-  
+
   if (!platform || platform === "all platforms") {
     const [codechefData, codeforcesData] = await Promise.all([
       fetchCodeChefContests(),
@@ -35,6 +35,12 @@ export default async function Home({
     contests = await fetchCodeChefContests();
   } else if (platform === "codeforces") {
     contests = await fetchCodeForcesContests();
+  }
+
+  if (searchQuery) {
+    contests = contests.filter((contest) =>
+      contest.name.toLowerCase().includes(searchQuery.toLowerCase()) || contest.platform.toLowerCase().includes(searchQuery.toLowerCase()) || contest.id.toString().includes(searchQuery.toString())
+    );
   }
 
   return (
