@@ -3,7 +3,8 @@ import { cn } from "@/lib/utils";
 import { Globe } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-export default function PlatFormFilters() {
+
+export default function PlatformFilters() {
   const buttons = [
     {
       icon: <Globe size={14} color="lightblue" />,

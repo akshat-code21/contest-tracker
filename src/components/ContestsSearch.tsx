@@ -5,6 +5,7 @@ import { Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import { useSearchParams } from "next/navigation";
+
 export default function ContestsSearch() {
   const [inputVal, setInputVal] = useState("");
   const router = useRouter();
