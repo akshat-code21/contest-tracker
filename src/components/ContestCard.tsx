@@ -11,6 +11,8 @@ import { Calendar, Clock } from "lucide-react";
 import { Button } from "./ui/button";
 import { ExternalLink } from "lucide-react";
 import { Contest } from "@/app/types/contest";
+import Link from 'next/link';
+
 export default function ContestCard({ contests }: { contests: Contest[] }) {
   const checkPlatform = (platform: string): string => {
     switch (platform) {
@@ -105,12 +107,14 @@ export default function ContestCard({ contests }: { contests: Contest[] }) {
                 </CardDescription>
               </CardHeader>
               <CardFooter className="w-full">
-                <Button variant={"outline"} className="w-full cursor-pointer">
-                  Visit {contest.platform}
-                  <span>
-                    <ExternalLink />
-                  </span>
-                </Button>
+                <Link href={contest.href} target="_blank" className="w-full">
+                  <Button variant={"outline"} className="w-full cursor-pointer">
+                    Visit {contest.platform}
+                    <span>
+                      <ExternalLink />
+                    </span>
+                  </Button>
+                </Link>
               </CardFooter>
             </Card>
           );
