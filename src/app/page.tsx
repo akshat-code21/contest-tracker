@@ -25,36 +25,30 @@ export default async function Home(props: { params: PageParams }) {
 
   let contests: Contest[] = [];
 
-  if (process.env.NODE_ENV === "production") {
-    contests = [];
-  } else {
-    try {
-      if (!platform || platform === "all platforms") {
-        const [codechefData, codeforcesData, leetcodeData] = await Promise.all([
-          axios.get("/api/codechef").then((res) => res.data),
-          axios.get("/api/codeforces").then((res) => res.data),
-          axios.get("/api/leetcode").then((res) => res.data),
-        ]);
-        contests = [...codechefData, ...codeforcesData, ...leetcodeData];
-      } else {
-        const response = await axios.get(`/api/${platform}`);
-        contests = response.data;
-      }
-
-      if (searchQuery) {
-        contests = contests.filter(
-          (contest) =>
-            contest.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            contest.platform
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase()) ||
-            contest.id.toString().includes(searchQuery.toString())
-        );
-      }
-    } catch (error) {
-      console.error("Error fetching contests:", error);
-      contests = [];
+  try {
+    if (!platform || platform === "all platforms") {
+      const [codechefData, codeforcesData, leetcodeData] = await Promise.all([
+        axios.get("/api/codechef").then((res) => res.data),
+        axios.get("/api/codeforces").then((res) => res.data),
+        axios.get("/api/leetcode").then((res) => res.data),
+      ]);
+      contests = [...codechefData, ...codeforcesData, ...leetcodeData];
+    } else {
+      const response = await axios.get(`/api/${platform}`);
+      contests = response.data;
     }
+
+    if (searchQuery) {
+      contests = contests.filter(
+        (contest) =>
+          contest.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          contest.platform.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          contest.id.toString().includes(searchQuery.toString())
+      );
+    }
+  } catch (error) {
+    console.error("Error fetching contests:", error);
+    contests = [];
   }
 
   return (
