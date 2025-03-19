@@ -8,7 +8,7 @@ import {
   CardDescription,
   CardContent,
 } from "./ui/card";
-import { Bookmark, Calendar, Clock, CloudCog, Youtube } from "lucide-react";
+import { Bookmark, Calendar, Clock, Youtube } from "lucide-react";
 import { Button } from "./ui/button";
 import { ExternalLink } from "lucide-react";
 import { Contest } from "@/app/types/contest";
@@ -153,7 +153,7 @@ export default function ContestCard({ contests }: { contests: Contest[] }) {
                 <Link href={contest.href} target="_blank" className="w-full sm:flex-1">
                   <Button 
                     variant="outline" 
-                    className="w-full flex items-center justify-center gap-2 bg-white"
+                    className="w-full flex items-center justify-center gap-2 bg-white dark:bg-white dark:text-black dark:hover:text-white dark:hover:bg-black"
                   >
                     Visit {contest.platform}
                     <ExternalLink className="h-4 w-4" />

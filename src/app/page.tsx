@@ -7,6 +7,8 @@ import axios from "axios";
 import { Contest } from "./types/contest";
 import { Suspense } from "react";
 import { cookies } from "next/headers";
+import { Sun } from "lucide-react";
+import ToggleTheme from "@/components/ToggleTheme";
 
 export const metadata: Metadata = {
   title: "Contest Tracker",
@@ -61,10 +63,15 @@ export default async function Home({ params, searchParams }: PageProps) {
   return (
     <div className="font-[family-name:var(--font-geist-sans)] min-h-screen">
       <div className="my-8 sm:my-12">
-        <Header />
-        <Suspense fallback={<div>Loading filters...</div>}>
-          <PlatFormFilters />
-        </Suspense>
+        <div className="relative max-w-5xl mx-auto px-4">
+          <div className="flex items-center justify-between">
+            <Header />
+            <ToggleTheme />
+          </div>
+          <Suspense fallback={<div>Loading filters...</div>}>
+            <PlatFormFilters />
+          </Suspense>
+        </div>
       </div>
       <Suspense fallback={<div>Loading search...</div>}>
         <ContestsSearch />
