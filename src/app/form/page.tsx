@@ -50,8 +50,16 @@ type FormValues = z.infer<typeof formSchema>;
 const UploadForm = () => {
   const router = useRouter();
   const [contests, setContests] = useState<Contest[]>([]);
+  const [selectedContestId, setSelectedContestId] = useState<string>("");
   
   useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const contestId = searchParams.get('contestId');
+    if (contestId) {
+      setSelectedContestId(contestId);
+      form.setValue('contestId', contestId);
+    }
+    
     const fetchContests = async () => {
       try {
         const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
@@ -74,7 +82,7 @@ const UploadForm = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       youtubeUrl: "",
-      contestId: "",
+      contestId: selectedContestId || "",
     },
   });
 
@@ -104,7 +112,7 @@ const UploadForm = () => {
         <Button
           variant="ghost"
           className="mb-6"
-          onClick={() => router.replace("/")}
+          onClick={() => router.back()}
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Contests
@@ -178,7 +186,7 @@ const UploadForm = () => {
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => router.replace("/")}
+                    onClick={() => router.back()}
                   >
                     Cancel
                   </Button>

@@ -26,15 +26,22 @@ export default async function Home({ params, searchParams }: PageProps) {
   const searchQuery = searchParamsResolved?.contest?.toString();
 
   let contests: Contest[] = [];
+  let isBookmarksPage = false;
+  let bookmarkedContestIds: string[] = [];
+  
   try {
     const baseUrl = process.env.NEXT_PUBLIC_API_URL
       ? process.env.NEXT_PUBLIC_API_URL
       : "http://localhost:3000";
 
+    const cookieStore = await cookies();
+    const bookmarksStr = cookieStore.get('bookmarks')?.value;
+    const bookmarkedContests = bookmarksStr ? JSON.parse(bookmarksStr) : [];
+    bookmarkedContestIds = bookmarkedContests.map((contest: Contest) => contest.id || contest.name);
+
     if (platform === "bookmarks") {
-      const cookieStore = await cookies();
-      const bookmarksStr = cookieStore.get('bookmarks')?.value;
-      contests = bookmarksStr ? JSON.parse(bookmarksStr) : [];
+      isBookmarksPage = true;
+      contests = bookmarkedContests;
     } else if (!platform || platform === "all platforms") {
       const [codechefData, codeforcesData, leetcodeData] = await Promise.all([
         fetch(`${baseUrl}/api/codechef`).then((res) => res.json()),
@@ -92,7 +99,11 @@ export default async function Home({ params, searchParams }: PageProps) {
       <Suspense fallback={<div>Loading search...</div>}>
         <ContestsSearch />
       </Suspense>
-      <ContestCard contests={contests} />
+      <ContestCard 
+        contests={contests} 
+        isBookmarksPage={isBookmarksPage} 
+        bookmarkedContestIds={bookmarkedContestIds} 
+      />
     </div>
   );
 }

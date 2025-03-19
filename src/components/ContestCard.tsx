@@ -16,27 +16,41 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-export default function ContestCard({ contests }: { contests: Contest[] }) {
-  const [bookmarkedContests, setBookmarkedContests] = useState<string[]>([]);
+export default function ContestCard({ 
+  contests, 
+  isBookmarksPage = false,
+  bookmarkedContestIds = []
+}: { 
+  contests: Contest[],
+  isBookmarksPage?: boolean,
+  bookmarkedContestIds?: string[]
+}) {
+  const [bookmarkedContests, setBookmarkedContests] = useState<string[]>(bookmarkedContestIds);
   const [youtubeLinks, setYoutubeLinks] = useState<Record<string, string>>({});
   const router = useRouter();
   const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
   useEffect(() => {
-    const loadBookmarks = async () => {
-      try {
-        const response = await axios.get(`${baseUrl}/api/bookmark`);
-        const bookmarks = response.data;
-        const uniqueBookmarkIds = [
-          ...new Set(bookmarks.map((bookmark: Contest) => bookmark.id)),
-        ] as string[];
-        setBookmarkedContests(uniqueBookmarkIds);
-      } catch (error) {
-        console.error("Error loading bookmarks:", error);
-      }
-    };
-    loadBookmarks();
-  }, []);
+    setBookmarkedContests(bookmarkedContestIds);
+  }, [bookmarkedContestIds]);
+
+  useEffect(() => {
+    if (bookmarkedContestIds.length === 0) {
+      const loadBookmarks = async () => {
+        try {
+          const response = await axios.get(`${baseUrl}/api/bookmark`);
+          const bookmarks = response.data;
+          const uniqueBookmarkIds = [
+            ...new Set(bookmarks.map((bookmark: Contest) => bookmark.id || bookmark.name)),
+          ] as string[];
+          setBookmarkedContests(uniqueBookmarkIds);
+        } catch (error) {
+          console.error("Error loading bookmarks:", error);
+        }
+      };
+      loadBookmarks();
+    }
+  }, [bookmarkedContestIds]);
 
   useEffect(() => {
     const loadYoutubeLinks = async () => {
@@ -122,18 +136,18 @@ export default function ContestCard({ contests }: { contests: Contest[] }) {
     if (youtubeUrl) {
       window.open(youtubeUrl, "_blank");
     } else {
-      router.push("/form");
+      router.push(`/form?contestId=${(contest.id || contest.name).toString()}`);
     }
   };
 
   const getContestKey = (contest: Contest): string => {
-
+    console.log("Getting contest key for:", contest.name, contest.id);
 
     let contestKey = "";
     switch (contest.platform.toLowerCase()) {
       case "codechef":
         const ccMatch = contest.name.match(/Starters\s+(\d+)/i);
-        contestKey = ccMatch ? `STARTERS${ccMatch[1]}` : "";
+        contestKey = ccMatch ? `STARTERS${ccMatch[1]}` : (contest.id || contest.name).toString();
         break;
       case "leetcode":
         const lcName = contest.name.toLowerCase();
@@ -164,20 +178,38 @@ export default function ContestCard({ contests }: { contests: Contest[] }) {
             const codetonMatch = contest.name.match(/CodeTON\s+Round\s+(\d+)/i);
             if (codetonMatch) {
               contestKey = codetonMatch[1];
+            } else {
+              contestKey = (contest.id || contest.name).toString();
             }
           }
         }
         break;
       default:
-        contestKey = "";
+        contestKey = (contest.id || contest.name).toString();
     }
 
+    console.log("Generated contest key:", contestKey);
     return contestKey;
   };
+
+  const isContestBookmarked = (contest: Contest) => {
+    const contestId = (contest.id || contest.name).toString();
+    
+    if (isBookmarksPage) {
+      return true;
+    }
+    return bookmarkedContests.some(id => 
+      id === contestId || 
+      id === contest.name || 
+      id === contest.id
+    );
+  };
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 px-4">
       {contests?.length > 0 ? (
         contests.map((contest: Contest) => {
+          const bookmarked = isContestBookmarked(contest);
           return (
             <Card
               key={contest.id || contest.name}
@@ -245,29 +277,15 @@ export default function ContestCard({ contests }: { contests: Contest[] }) {
                 </Link>
                 <div className="flex w-full gap-2">
                   <Button
-                    variant={
-                      bookmarkedContests.includes(
-                        (contest.id || contest.name).toString()
-                      )
-                        ? "default"
-                        : "outline"
-                    }
+                    variant={bookmarked ? "default" : "outline"}
                     className="flex-1 flex items-center justify-center gap-1 bg-black text-white text-xs"
                     onClick={() => handleBookmark(contest)}
                   >
-                    {bookmarkedContests.includes(
-                      (contest.id || contest.name).toString()
-                    )
-                      ? "Bookmarked"
-                      : "Bookmark"}
+                    {bookmarked ? "Bookmarked" : "Bookmark"}
                     <Bookmark
                       className={cn(
                         "h-4 w-4",
-                        bookmarkedContests.includes(
-                          (contest.id || contest.name).toString()
-                        )
-                          ? "fill-current"
-                          : ""
+                        bookmarked ? "fill-current" : ""
                       )}
                     />
                   </Button>
