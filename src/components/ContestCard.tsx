@@ -14,10 +14,13 @@ import { Contest } from "@/app/types/contest";
 import Link from "next/link";
 import axios from "axios";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function ContestCard({ contests }: { contests: Contest[] }) {
   const [bookmarkedContests, setBookmarkedContests] = useState<string[]>([]);
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL ? process.env.NEXT_PUBLIC_API_URL : "http://localhost:3000"
+  const [youtubeLinks, setYoutubeLinks] = useState<Record<string, string>>({});
+  const router = useRouter();
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
   useEffect(() => {
     const loadBookmarks = async () => {
@@ -31,6 +34,19 @@ export default function ContestCard({ contests }: { contests: Contest[] }) {
       }
     };
     loadBookmarks();
+  }, []);
+
+  useEffect(() => {
+    const loadYoutubeLinks = async () => {
+      try {
+        const response = await fetch(`${baseUrl}/api/youtube`);
+        const links = await response.json();
+        setYoutubeLinks(links);
+      } catch (error) {
+        console.error("Error loading YouTube links:", error);
+      }
+    };
+    loadYoutubeLinks();
   }, []);
 
   const checkPlatform = (platform: string): string => {
@@ -73,7 +89,7 @@ export default function ContestCard({ contests }: { contests: Contest[] }) {
   const handleBookmark = async (contest: Contest) => {
     const contestId = contest.id || contest.name;
     try {
-      const isBookmarked = bookmarkedContests.includes(contestId);
+      const isBookmarked = bookmarkedContests.includes(contestId.toString());
       const response = await axios({
         method: isBookmarked ? 'DELETE' : 'POST',
         url: `${baseUrl}/api/bookmark`,
@@ -83,9 +99,9 @@ export default function ContestCard({ contests }: { contests: Contest[] }) {
       if (response.status === 200) {
         setBookmarkedContests(prev => {
           if (isBookmarked) {
-            return prev.filter(id => id !== contestId);
+            return prev.filter(id => id !== contestId.toString());
           } else {
-            return prev.includes(contestId) ? prev : [...prev, contestId];
+            return prev.includes(contestId.toString()) ? prev : [...prev, contestId.toString()];
           }
         });
       }
@@ -93,6 +109,16 @@ export default function ContestCard({ contests }: { contests: Contest[] }) {
       console.error("Error handling bookmark:", error);
     }
   };
+
+  const handleYT = (contest: Contest) => {
+    const youtubeUrl = youtubeLinks[contest.id];
+    if (youtubeUrl) {
+      window.open(youtubeUrl, '_blank');
+    } else {
+      router.push('/form');
+    }
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-4">
       {contests?.length > 0 ? (
@@ -160,24 +186,29 @@ export default function ContestCard({ contests }: { contests: Contest[] }) {
                 </Link>
                 <div className="flex w-full sm:w-auto gap-2">
                   <Button 
-                    variant={bookmarkedContests.includes(contest.id || contest.name) ? "default" : "outline"}
+                    variant={bookmarkedContests.includes((contest.id || contest.name).toString()) ? "default" : "outline"}
                     className="flex-1 sm:flex-initial flex items-center justify-center gap-2 bg-black text-white"
                     onClick={() => handleBookmark(contest)}
                   >
-                    {bookmarkedContests.includes(contest.id || contest.name) ? "Bookmarked" : "Bookmark"}
+                    {bookmarkedContests.includes((contest.id || contest.name).toString()) ? "Bookmarked" : "Bookmark"}
                     <Bookmark 
                       className={cn(
                         "h-4 w-4",
-                        bookmarkedContests.includes(contest.id || contest.name) ? "fill-current" : ""
+                        bookmarkedContests.includes((contest.id || contest.name).toString()) ? "fill-current" : ""
                       )} 
                     />
                   </Button>
                   <Button 
                     variant="destructive" 
-                    className="flex-1 sm:flex-initial flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700"
-                    // onClick={() => handleYT(contest)}
+                    className={cn(
+                      "flex-1 sm:flex-initial flex items-center justify-center gap-2",
+                      youtubeLinks[contest.id] 
+                        ? "text-xs bg-red-600 hover:bg-red-700" 
+                        : "bg-gray-400 hover:bg-gray-500"
+                    )}
+                    onClick={() => handleYT(contest)}
                   >
-                    Youtube
+                    {youtubeLinks[contest.id] ? "Watch Solution" : "Add Solution"}
                     <Youtube className="h-4 w-4" />
                   </Button>
                 </div>

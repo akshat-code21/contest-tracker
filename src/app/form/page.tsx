@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -12,10 +12,8 @@ import {
   BookOpen,
   ArrowLeft,
 } from "lucide-react";
-import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Form,
   FormControl,
@@ -34,6 +32,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { toast, Toaster } from "sonner";
+import { Contest } from "../types/contest";
 
 const formSchema = z.object({
   youtubeUrl: z
@@ -43,34 +42,61 @@ const formSchema = z.object({
       (value) => value.includes("youtube.com/") || value.includes("youtu.be/"),
       { message: "Please enter a valid YouTube URL" }
     ),
-  title: z.string().min(1, { message: "Video title is required" }),
-  description: z.string().optional(),
-  author: z.string().min(1, { message: "Author name is required" }),
-  date: z.string().min(1, { message: "Date is required" }),
-  tags: z.string().optional(),
+  contestId: z.string().min(1, { message: "Contest selection is required" }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
 const UploadForm = () => {
   const router = useRouter();
+  const [contests, setContests] = useState<Contest[]>([]);
+  
+  useEffect(() => {
+    const fetchContests = async () => {
+      try {
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+        const response = await fetch(`${baseUrl}/api/contests`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch contests');
+        }
+        const data = await response.json();
+        console.log('Fetched contests:', data); // Debug log
+        setContests(data);
+      } catch (error) {
+        console.error('Error fetching contests:', error);
+        toast.error("Failed to load contests");
+      }
+    };
+
+    fetchContests();
+  }, []);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       youtubeUrl: "",
-      title: "",
-      description: "",
-      author: "",
-      date: new Date().toISOString().split("T")[0],
-      tags: "",
+      contestId: "",
     },
   });
 
-  const onSubmit = (data: FormValues) => {
-    console.log(data);
-    toast("YouTube Link Submitted");
-    router.replace("/");
+  const onSubmit = async (data: FormValues) => {
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+    try {
+      await fetch(`${baseUrl}/api/youtube`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contestId: data.contestId,
+          youtubeUrl: data.youtubeUrl,
+        }),
+      });
+      toast("YouTube Link Submitted");
+      router.replace("/");
+    } catch (error) {
+      toast.error("Failed to submit YouTube link");
+    }
   };
 
   return (
@@ -101,6 +127,29 @@ const UploadForm = () => {
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="space-y-6"
               >
+                <FormField
+                  control={form.control}
+                  name="contestId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Contest</FormLabel>
+                      <FormControl>
+                        <select
+                          {...field}
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          <option value="">Select a contest</option>
+                          {contests && contests.map((contest) => (
+                            <option key={contest.id} value={contest.id}>
+                              {contest.name} ({contest.platform})
+                            </option>
+                          ))}
+                        </select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="youtubeUrl"
