@@ -7,7 +7,7 @@ import {
   CardFooter,
   CardDescription,
 } from "./ui/card";
-import { Bookmark, Calendar, Clock, Youtube } from "lucide-react";
+import { Bookmark, Calendar, Clock, CloudCog, Youtube } from "lucide-react";
 import { Button } from "./ui/button";
 import { ExternalLink } from "lucide-react";
 import { Contest } from "@/app/types/contest";
@@ -27,7 +27,9 @@ export default function ContestCard({ contests }: { contests: Contest[] }) {
       try {
         const response = await axios.get(`${baseUrl}/api/bookmark`);
         const bookmarks = response.data;
-        const uniqueBookmarkIds = [...new Set(bookmarks.map((bookmark: Contest) => bookmark.id))] as string[];
+        const uniqueBookmarkIds = [
+          ...new Set(bookmarks.map((bookmark: Contest) => bookmark.id)),
+        ] as string[];
         setBookmarkedContests(uniqueBookmarkIds);
       } catch (error) {
         console.error("Error loading bookmarks:", error);
@@ -91,17 +93,19 @@ export default function ContestCard({ contests }: { contests: Contest[] }) {
     try {
       const isBookmarked = bookmarkedContests.includes(contestId.toString());
       const response = await axios({
-        method: isBookmarked ? 'DELETE' : 'POST',
+        method: isBookmarked ? "DELETE" : "POST",
         url: `${baseUrl}/api/bookmark`,
-        data: { ...contest, id: contestId }
+        data: { ...contest, id: contestId },
       });
-      
+
       if (response.status === 200) {
-        setBookmarkedContests(prev => {
+        setBookmarkedContests((prev) => {
           if (isBookmarked) {
-            return prev.filter(id => id !== contestId.toString());
+            return prev.filter((id) => id !== contestId.toString());
           } else {
-            return prev.includes(contestId.toString()) ? prev : [...prev, contestId.toString()];
+            return prev.includes(contestId.toString())
+              ? prev
+              : [...prev, contestId.toString()];
           }
         });
       }
@@ -111,14 +115,54 @@ export default function ContestCard({ contests }: { contests: Contest[] }) {
   };
 
   const handleYT = (contest: Contest) => {
-    const youtubeUrl = youtubeLinks[contest.id];
+    let contestKey = "";
+    switch (contest.platform.toLowerCase()) {
+      case "codechef":
+        const ccMatch = contest.name.match(/Starters\s+(\d+)/i);
+        contestKey = ccMatch ? `STARTERS${ccMatch[1]}` : "";
+        break;
+      case "leetcode":
+        contestKey = contest.name.toLowerCase().replace(/\s+/g, "-");
+        break;
+      case "codeforces":
+        contestKey = contest.id.toString();
+        break;
+    }
+
+    const youtubeUrl = youtubeLinks[contestKey];
     if (youtubeUrl) {
-      window.open(youtubeUrl, '_blank');
+      window.open(youtubeUrl, "_blank");
     } else {
-      router.push('/form');
+      router.push("/form");
     }
   };
 
+  const getContestKey = (contest: Contest): string => {
+    switch (contest.platform.toLowerCase()) {
+      case "codechef":
+        const ccMatch = contest.name.match(/Starters\s+(\d+)/i);
+        return ccMatch ? `STARTERS${ccMatch[1]}` : "";
+      case "leetcode":
+        return contest.name.toLowerCase().replace(/\s+/g, "-");
+      case "codeforces":
+        const cfMatch = contest.name.match(/Round\s+(\d+)/i);
+        if (cfMatch) {
+          return cfMatch[1];
+        }
+
+        const edMatch = contest.name.match(/Educational.*Round\s+(\d+)/i);
+        if (edMatch) {
+          return edMatch[1];
+        }
+        const codetonMatch = contest.name.match(/CodeTON\s+Round\s+(\d+)/i);
+        if (codetonMatch) {
+          return codetonMatch[1];
+        }
+        return "";
+      default:
+        return "";
+    }
+  };
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-4">
       {contests?.length > 0 ? (
@@ -175,9 +219,13 @@ export default function ContestCard({ contests }: { contests: Contest[] }) {
                 </CardDescription>
               </CardHeader>
               <CardFooter className="w-full flex flex-col sm:flex-row gap-2">
-                <Link href={contest.href} target="_blank" className="w-full sm:flex-1">
-                  <Button 
-                    variant="outline" 
+                <Link
+                  href={contest.href}
+                  target="_blank"
+                  className="w-full sm:flex-1"
+                >
+                  <Button
+                    variant="outline"
                     className="w-full flex items-center justify-center gap-2 bg-white dark:bg-white dark:text-black dark:hover:text-white dark:hover:bg-black"
                   >
                     Visit {contest.platform}
@@ -185,30 +233,46 @@ export default function ContestCard({ contests }: { contests: Contest[] }) {
                   </Button>
                 </Link>
                 <div className="flex w-full sm:w-auto gap-2">
-                  <Button 
-                    variant={bookmarkedContests.includes((contest.id || contest.name).toString()) ? "default" : "outline"}
+                  <Button
+                    variant={
+                      bookmarkedContests.includes(
+                        (contest.id || contest.name).toString()
+                      )
+                        ? "default"
+                        : "outline"
+                    }
                     className="flex-1 sm:flex-initial flex items-center justify-center gap-2 bg-black text-white"
                     onClick={() => handleBookmark(contest)}
                   >
-                    {bookmarkedContests.includes((contest.id || contest.name).toString()) ? "Bookmarked" : "Bookmark"}
-                    <Bookmark 
+                    {bookmarkedContests.includes(
+                      (contest.id || contest.name).toString()
+                    )
+                      ? "Bookmarked"
+                      : "Bookmark"}
+                    <Bookmark
                       className={cn(
                         "h-4 w-4",
-                        bookmarkedContests.includes((contest.id || contest.name).toString()) ? "fill-current" : ""
-                      )} 
+                        bookmarkedContests.includes(
+                          (contest.id || contest.name).toString()
+                        )
+                          ? "fill-current"
+                          : ""
+                      )}
                     />
                   </Button>
-                  <Button 
-                    variant="destructive" 
+                  <Button
+                    variant="destructive"
                     className={cn(
                       "flex-1 sm:flex-initial flex items-center justify-center gap-2",
-                      youtubeLinks[contest.id] 
-                        ? "text-xs bg-red-600 hover:bg-red-700" 
+                      youtubeLinks[getContestKey(contest)]
+                        ? "text-xs bg-red-600 hover:bg-red-700"
                         : "bg-gray-400 hover:bg-gray-500"
                     )}
                     onClick={() => handleYT(contest)}
                   >
-                    {youtubeLinks[contest.id] ? "Watch Solution" : "Add Solution"}
+                    {youtubeLinks[getContestKey(contest)]
+                      ? "Watch Solution"
+                      : "Add Solution"}
                     <Youtube className="h-4 w-4" />
                   </Button>
                 </div>

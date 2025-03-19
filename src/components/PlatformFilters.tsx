@@ -5,7 +5,20 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+
 export default function PlatformFilters() {
+  const testFetch = async () => {
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+      const response = await fetch(`${baseUrl}/api/youtube/fetch-playlist`);
+      const data = await response.json();
+      toast.success(`Successfully fetched ${data.count} videos`);
+    } catch (error) {
+      toast.error("Failed to fetch videos");
+    }
+  };
+
   const buttons = [
     {
       icon: <Globe size={14} color="lightblue" />,
@@ -32,11 +45,6 @@ export default function PlatformFilters() {
       title: "Bookmarks",
       className: "bg-primary text-white",
     },
-    // {
-    //   icon : <FileCode size={14}/>,
-    //   title : "Upload YT Link",
-    //   className : "bg-primary text-white"
-    // }
   ];
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -119,8 +127,8 @@ export default function PlatformFilters() {
         );
       })}
       <Button
-        onClick={()=>{
-          router.push("/form")
+        onClick={() => {
+          router.push("/form");
         }}
         variant="outline"
         className={cn(
@@ -131,6 +139,15 @@ export default function PlatformFilters() {
         <Youtube className="h-4 w-4" />
         <span>Upload YT Link</span>
       </Button>
+      {process.env.NODE_ENV === "development" && (
+        <Button
+          onClick={testFetch}
+          variant="outline"
+          className="bg-yellow-100 hover:bg-yellow-200"
+        >
+          Test YT Fetch
+        </Button>
+      )}
     </div>
   );
 }
