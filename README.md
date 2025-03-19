@@ -11,6 +11,9 @@ A web application that helps you stay updated with the latest competitive progra
 - Clean and responsive UI
 - Platform-specific color schemes
 - Direct links to contest pages
+- Dark/Light mode toggle
+- Bookmark favorite contests
+- YouTube solution links for contests
 
 ## Tech Stack
 
@@ -18,7 +21,9 @@ A web application that helps you stay updated with the latest competitive progra
 - [TypeScript](https://www.typescriptlang.org/) - Type safety
 - [Tailwind CSS](https://tailwindcss.com/) - Styling
 - [Lucide React](https://lucide.dev/) - Icons
-- [Shad CN](https://https://ui.shadcn.com/) - UI Components
+- [Shadcn UI](https://ui.shadcn.com/) - UI Components
+- [MongoDB](https://www.mongodb.com/) - Database
+- [Zod](https://zod.dev/) - Schema validation
 
 ## Getting Started
 
@@ -26,22 +31,22 @@ A web application that helps you stay updated with the latest competitive progra
 
 ```bash
 git clone https://github.com/<your-username>/contest-tracker.git
-cd contest-tracker-
+cd contest-tracker
 ```
 
-2. Install dependencies :
+2. Install dependencies:
 
 ```bash
 npm install
 ```
 
-# or
+or
 
 ```bash
 yarn install
 ```
 
-# or
+or
 
 ```bash
 pnpm install
@@ -51,6 +56,11 @@ pnpm install
 
 ```bash
 NEXT_PUBLIC_API_URL=http://localhost:3000
+MONGODB_URI=your_mongodb_connection_string
+YOUTUBE_API_KEY=your_youtube_api_key
+CODECHEF_PLAYLIST_ID=your_codechef_playlist_id
+LEETCODE_PLAYLIST_ID=your_leetcode_playlist_id
+CODEFORCES_PLAYLIST_ID=your_codeforces_playlist_id
 ```
 
 4. Run the development server:
@@ -59,13 +69,13 @@ NEXT_PUBLIC_API_URL=http://localhost:3000
 npm run dev
 ```
 
-# or
+or
 
 ```bash
 yarn run dev
 ```
 
-# or
+or
 
 ```bash
 pnpm run dev
@@ -78,29 +88,97 @@ pnpm run dev
 ```
 src/
 ├── app/
-│ ├── api/
-│ ├── types/
-│ └── page.tsx
+│   ├── api/
+│   │   ├── bookmark/
+│   │   ├── codechef/
+│   │   ├── codeforces/
+│   │   ├── contests/
+│   │   ├── leetcode/
+│   │   └── youtube/
+│   ├── form/
+│   ├── types/
+│   └── page.tsx
 ├── components/
-│ ├── ui/
-│ └── ...
+│   ├── ui/
+│   └── ...
 └── lib/ # Utility functions
 ```
 
 ## API Routes
 
-The application includes API routes for fetching contest data from different platforms:
+The application includes API routes for fetching and managing data:
 
 - `/api/codeforces` - Fetches contests from Codeforces
 - `/api/leetcode` - Fetches contests from LeetCode
 - `/api/codechef` - Fetches contests from CodeChef
+- `/api/contests` - Fetches contests from all platforms
+- `/api/bookmark` - Manages bookmarked contests
+- `/api/youtube` - Manages YouTube solution links
+
+## Types
+
+The application uses TypeScript for type safety. Key types include:
+
+```typescript
+interface Contest {
+  id: string | number;
+  name: string;
+  platform: string;
+  startTime: string;
+  duration: string;
+  status: string;
+  href: string;
+}
+
+interface CodeForcesContests {
+  id: number;
+  name: string;
+  phase: string;
+  startTimeSeconds: number;
+  durationSeconds: number;
+}
+
+interface CodeChefContest {
+  contest_code: string;
+  contest_name: string;
+  contest_start_date_iso: string;
+  contest_duration: string;
+}
+
+
+type Theme = "dark" | "light";
+
+interface ThemeProviderState {
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
+}
+
+interface FormValues {
+  youtubeUrl: string;
+  contestId: string;
+}
+```
+
+## Features in Detail
+
+### Contest Filtering
+Filter contests by platform (Codeforces, LeetCode, CodeChef) or view all contests at once.
+
+### Bookmarks
+Save your favorite contests for quick access.
+
+### YouTube Solutions
+View solution videos for contests or upload your own YouTube links to share with the community.
+
+### Dark/Light Mode
+Toggle between dark and light themes based on your preference.
 
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Future Integrations 
-- YT Links to solutions of contest problems.
 - Scheduled Emails for contests
-- Dark/Light Mode
-- Support for other platforms like HackerRank,AtCoder
+- Support for other platforms like HackerRank, AtCoder
+- User authentication and profiles
+- Contest reminders and notifications
