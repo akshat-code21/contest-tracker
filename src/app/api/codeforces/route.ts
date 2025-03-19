@@ -1,3 +1,4 @@
+import { Contest } from "@/app/types/contest";
 import parseDateString from "@/lib/parseDateString";
 
 interface CodeForcesContests {
@@ -41,10 +42,10 @@ export async function GET() {
         new Date(contest.startTimeSeconds * 1000).toISOString()
       ),
       duration: contest.durationSeconds / 3600 + " hours",
-      href: `https://www.codeforces.com/contest/${contest.id}`,
+      href: `https://codeforces.com/contest/${Number(contest.id)}`,
     });
 
-    const formattedContests = [
+    const formattedContests: Contest[] = [
       ...futureContests.map((contest: CodeForcesContests) =>
         getFormattedContest(contest, "upcoming")
       ),
@@ -56,7 +57,35 @@ export async function GET() {
       ),
     ];
 
-    return new Response(JSON.stringify(formattedContests), {
+
+    const sortedUpcoming = formattedContests
+      .filter((contest) => contest.status === "upcoming")
+      .sort(
+        (a, b) =>
+          new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
+      );
+
+    const sortedOngoing = formattedContests
+      .filter((contest) => contest.status === "ongoing")
+      .sort(
+        (a, b) =>
+          new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
+      );
+
+    const sortedCompleted = formattedContests
+      .filter((contest) => contest.status === "completed")
+      .sort(
+        (a, b) =>
+          new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
+      );
+
+    const allSortedContests = [
+      ...sortedUpcoming,
+      ...sortedOngoing,
+      ...sortedCompleted,
+    ];
+
+    return new Response(JSON.stringify(allSortedContests), {
       headers: {
         "Content-Type": "application/json",
         "Cache-Control": "public, s-maxage=300",
