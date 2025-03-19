@@ -2,6 +2,9 @@
 
 A web application that helps you stay updated with the latest competitive programming contests from multiple platforms including Codeforces, LeetCode, and CodeChef.
 
+# Product Demo : 
+<div style="position: relative; padding-bottom: NaN%; height: 0;"><iframe src="https://www.loom.com/embed/c2d5af58dc6b4bda9a48151c3e43559d?sid=364365bd-6fcc-4c50-ad26-0817ec05d095" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>
+
 ## Features
 
 - Real-time tracking of programming contests
