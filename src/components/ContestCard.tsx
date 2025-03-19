@@ -19,12 +19,14 @@ import { useState, useEffect } from "react";
 export default function ContestCard({ contests }: { contests: Contest[] }) {
   const [bookmarkedContests, setBookmarkedContests] = useState<string[]>([]);
   const baseUrl = process.env.NEXT_PUBLIC_API_URL ? process.env.NEXT_PUBLIC_API_URL : "http://localhost:3000"
+
   useEffect(() => {
     const loadBookmarks = async () => {
       try {
         const response = await axios.get(`${baseUrl}/api/bookmark`);
         const bookmarks = response.data;
-        setBookmarkedContests(bookmarks.map((bookmark: Contest) => bookmark.id));
+        const uniqueBookmarkIds = [...new Set(bookmarks.map((bookmark: Contest) => bookmark.id))] as string[];
+        setBookmarkedContests(uniqueBookmarkIds);
       } catch (error) {
         console.error("Error loading bookmarks:", error);
       }
@@ -70,21 +72,23 @@ export default function ContestCard({ contests }: { contests: Contest[] }) {
     }
   };
   const handleBookmark = async (contest: Contest) => {
+    const contestId = contest.id || contest.name;
     try {
-      const isBookmarked = bookmarkedContests.includes(contest.id);
+      const isBookmarked = bookmarkedContests.includes(contestId);
       const response = await axios({
         method: isBookmarked ? 'DELETE' : 'POST',
-        url: "/api/bookmark",
-        data: contest
+        url: `${baseUrl}/api/bookmark`,
+        data: { ...contest, id: contestId }
       });
       
       if (response.status === 200) {
-        setBookmarkedContests(prev => 
-          isBookmarked 
-            ? prev.filter(id => id !== contest.id)
-            : [...prev, contest.id]
-        );
-        console.log(isBookmarked ? "Contest unbookmarked" : "Contest bookmarked");
+        setBookmarkedContests(prev => {
+          if (isBookmarked) {
+            return prev.filter(id => id !== contestId);
+          } else {
+            return prev.includes(contestId) ? prev : [...prev, contestId];
+          }
+        });
       }
     } catch (error) {
       console.error("Error handling bookmark:", error);
@@ -145,35 +149,39 @@ export default function ContestCard({ contests }: { contests: Contest[] }) {
                   </div>
                 </CardDescription>
               </CardHeader>
-              <CardFooter className="w-full gap-3 flex-1 flex items-center">
-                <Link href={contest.href} target="_blank" className="w-full">
-                  <Button variant={"outline"} className="w-full cursor-pointer">
+              <CardFooter className="w-full flex flex-col sm:flex-row gap-2">
+                <Link href={contest.href} target="_blank" className="w-full sm:flex-1">
+                  <Button 
+                    variant="outline" 
+                    className="w-full flex items-center justify-center gap-2 bg-white"
+                  >
                     Visit {contest.platform}
-                    <span>
-                      <ExternalLink />
-                    </span>
+                    <ExternalLink className="h-4 w-4" />
                   </Button>
                 </Link>
-                <Button 
-                  variant={bookmarkedContests.includes(contest.id) ? "default" : "outline"} 
-                  className="cursor-pointer"
-                  onClick={() => handleBookmark(contest)}
-                >
-                  Bookmark
-                  <span>
-                    <Bookmark className={bookmarkedContests.includes(contest.id) ? "fill-current" : ""} />
-                  </span>
-                </Button>
-                <Button 
-                  variant={"destructive"} 
-                  className="cursor-pointer"
-                  // onClick={() => handleYT(contest)}
-                >
-                  Youtube
-                  <span>
-                    <Youtube />
-                  </span>
-                </Button>
+                <div className="flex w-full sm:w-auto gap-2">
+                  <Button 
+                    variant={bookmarkedContests.includes(contest.id || contest.name) ? "default" : "outline"}
+                    className="flex-1 sm:flex-initial flex items-center justify-center gap-2 bg-black text-white"
+                    onClick={() => handleBookmark(contest)}
+                  >
+                    {bookmarkedContests.includes(contest.id || contest.name) ? "Bookmarked" : "Bookmark"}
+                    <Bookmark 
+                      className={cn(
+                        "h-4 w-4",
+                        bookmarkedContests.includes(contest.id || contest.name) ? "fill-current" : ""
+                      )} 
+                    />
+                  </Button>
+                  <Button 
+                    variant="destructive" 
+                    className="flex-1 sm:flex-initial flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700"
+                    // onClick={() => handleYT(contest)}
+                  >
+                    Youtube
+                    <Youtube className="h-4 w-4" />
+                  </Button>
+                </div>
               </CardFooter>
             </Card>
           );
