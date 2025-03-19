@@ -2,8 +2,8 @@
 
 A web application that helps you stay updated with the latest competitive programming contests from multiple platforms including Codeforces, LeetCode, and CodeChef.
 
-# Product Demo : 
-[![Watch the demo video](https://www.loom.com/i/5d904c82d27a42be8f7b01e45eb08333)](https://www.loom.com/share/c2d5af58dc6b4bda9a48151c3e43559d?sid=f9d30762-a299-4405-9f3e-b18e1b406e00)
+# Product Demo (Click on thumbnail to go to loom for video demo)
+[![Watch the demo video](https://2xn06x4yit.ufs.sh/f/AKnG3U5N0ArhXwdDCg1vbzNHMropJfZ3dTBSE08CWjxAgmie)](https://www.loom.com/share/c2d5af58dc6b4bda9a48151c3e43559d?sid=f9d30762-a299-4405-9f3e-b18e1b406e00)
 
 ## Features
 
