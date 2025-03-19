@@ -6,6 +6,7 @@ import PlatFormFilters from "@/components/PlatformFilters";
 import axios from "axios";
 import { Contest } from "./types/contest";
 import { Suspense } from "react";
+import { cookies } from "next/headers";
 
 export const metadata: Metadata = {
   title: "Contest Tracker",
@@ -15,24 +16,24 @@ export const metadata: Metadata = {
 type PageProps = {
   params: Promise<Record<string, never>>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}
+};
 
-export default async function Home({
-  params,
-  searchParams,
-}: PageProps) {
+export default async function Home({ params, searchParams }: PageProps) {
   const searchParamsResolved = await searchParams;
   const platform = searchParamsResolved?.platform?.toString().toLowerCase();
   const searchQuery = searchParamsResolved?.contest?.toString();
 
   let contests: Contest[] = [];
-
   try {
     const baseUrl = process.env.NEXT_PUBLIC_API_URL
       ? process.env.NEXT_PUBLIC_API_URL
       : "http://localhost:3000";
 
-    if (!platform || platform === "all platforms") {
+    if (platform === "bookmarks") {
+      const cookieStore = await cookies();
+      const bookmarksStr = cookieStore.get('bookmarks')?.value;
+      contests = bookmarksStr ? JSON.parse(bookmarksStr) : [];
+    } else if (!platform || platform === "all platforms") {
       const [codechefData, codeforcesData, leetcodeData] = await Promise.all([
         fetch(`${baseUrl}/api/codechef`).then((res) => res.json()),
         fetch(`${baseUrl}/api/codeforces`).then((res) => res.json()),

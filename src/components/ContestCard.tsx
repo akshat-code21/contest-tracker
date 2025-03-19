@@ -1,3 +1,4 @@
+"use client";
 import { cn } from "@/lib/utils";
 import {
   Card,
@@ -7,13 +8,30 @@ import {
   CardDescription,
   CardContent,
 } from "./ui/card";
-import { Calendar, Clock } from "lucide-react";
+import { Bookmark, Calendar, Clock, CloudCog, Youtube } from "lucide-react";
 import { Button } from "./ui/button";
 import { ExternalLink } from "lucide-react";
 import { Contest } from "@/app/types/contest";
-import Link from 'next/link';
+import Link from "next/link";
+import axios from "axios";
+import { useState, useEffect } from "react";
 
 export default function ContestCard({ contests }: { contests: Contest[] }) {
+  const [bookmarkedContests, setBookmarkedContests] = useState<string[]>([]);
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL ? process.env.NEXT_PUBLIC_API_URL : "http://localhost:3000"
+  useEffect(() => {
+    const loadBookmarks = async () => {
+      try {
+        const response = await axios.get(`${baseUrl}/api/bookmark`);
+        const bookmarks = response.data;
+        setBookmarkedContests(bookmarks.map((bookmark: Contest) => bookmark.id));
+      } catch (error) {
+        console.error("Error loading bookmarks:", error);
+      }
+    };
+    loadBookmarks();
+  }, []);
+
   const checkPlatform = (platform: string): string => {
     switch (platform) {
       case "codeforces":
@@ -49,6 +67,27 @@ export default function ContestCard({ contests }: { contests: Contest[] }) {
         return "bg-ongoing-secondary text-ongoing-primary";
       default:
         return "bg-gray-200 text-gray-700";
+    }
+  };
+  const handleBookmark = async (contest: Contest) => {
+    try {
+      const isBookmarked = bookmarkedContests.includes(contest.id);
+      const response = await axios({
+        method: isBookmarked ? 'DELETE' : 'POST',
+        url: "/api/bookmark",
+        data: contest
+      });
+      
+      if (response.status === 200) {
+        setBookmarkedContests(prev => 
+          isBookmarked 
+            ? prev.filter(id => id !== contest.id)
+            : [...prev, contest.id]
+        );
+        console.log(isBookmarked ? "Contest unbookmarked" : "Contest bookmarked");
+      }
+    } catch (error) {
+      console.error("Error handling bookmark:", error);
     }
   };
   return (
@@ -106,7 +145,7 @@ export default function ContestCard({ contests }: { contests: Contest[] }) {
                   </div>
                 </CardDescription>
               </CardHeader>
-              <CardFooter className="w-full">
+              <CardFooter className="w-full gap-3 flex-1 flex items-center">
                 <Link href={contest.href} target="_blank" className="w-full">
                   <Button variant={"outline"} className="w-full cursor-pointer">
                     Visit {contest.platform}
@@ -115,12 +154,32 @@ export default function ContestCard({ contests }: { contests: Contest[] }) {
                     </span>
                   </Button>
                 </Link>
+                <Button 
+                  variant={bookmarkedContests.includes(contest.id) ? "default" : "outline"} 
+                  className="cursor-pointer"
+                  onClick={() => handleBookmark(contest)}
+                >
+                  Bookmark
+                  <span>
+                    <Bookmark className={bookmarkedContests.includes(contest.id) ? "fill-current" : ""} />
+                  </span>
+                </Button>
+                <Button 
+                  variant={"destructive"} 
+                  className="cursor-pointer"
+                  // onClick={() => handleYT(contest)}
+                >
+                  Youtube
+                  <span>
+                    <Youtube />
+                  </span>
+                </Button>
               </CardFooter>
             </Card>
           );
         })
       ) : (
-        <div className="flex justify-center items-center text-4xl absolute mx-auto top-1/2 left-[40%]">
+        <div className="col-span-full flex justify-center items-center text-4xl py-12">
           No Contests Found.
         </div>
       )}

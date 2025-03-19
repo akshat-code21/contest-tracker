@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { Globe } from "lucide-react";
+import { Bookmark, Globe, icons } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
@@ -26,6 +26,11 @@ export default function PlatformFilters() {
       title: "CodeChef",
       className: "bg-cc-secondary text-cc-primary",
     },
+    {
+      icon : <Bookmark size={14} color="lightblue"/>,
+      title : "Bookmarks",
+      className : "bg-primary text-white"
+    }
   ];
   const searchParams = useSearchParams();
   const platform = searchParams.get("platform");
