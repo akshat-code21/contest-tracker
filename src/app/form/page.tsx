@@ -60,7 +60,6 @@ const UploadForm = () => {
           throw new Error('Failed to fetch contests');
         }
         const data = await response.json();
-        console.log('Fetched contests:', data); // Debug log
         setContests(data);
       } catch (error) {
         console.error('Error fetching contests:', error);

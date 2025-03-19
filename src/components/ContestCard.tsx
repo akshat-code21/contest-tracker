@@ -115,21 +115,10 @@ export default function ContestCard({ contests }: { contests: Contest[] }) {
   };
 
   const handleYT = (contest: Contest) => {
-    let contestKey = "";
-    switch (contest.platform.toLowerCase()) {
-      case "codechef":
-        const ccMatch = contest.name.match(/Starters\s+(\d+)/i);
-        contestKey = ccMatch ? `STARTERS${ccMatch[1]}` : "";
-        break;
-      case "leetcode":
-        contestKey = contest.name.toLowerCase().replace(/\s+/g, "-");
-        break;
-      case "codeforces":
-        contestKey = contest.id.toString();
-        break;
-    }
+    const contestKey = getContestKey(contest);
 
     const youtubeUrl = youtubeLinks[contestKey];
+
     if (youtubeUrl) {
       window.open(youtubeUrl, "_blank");
     } else {
@@ -138,30 +127,52 @@ export default function ContestCard({ contests }: { contests: Contest[] }) {
   };
 
   const getContestKey = (contest: Contest): string => {
+
+
+    let contestKey = "";
     switch (contest.platform.toLowerCase()) {
       case "codechef":
         const ccMatch = contest.name.match(/Starters\s+(\d+)/i);
-        return ccMatch ? `STARTERS${ccMatch[1]}` : "";
+        contestKey = ccMatch ? `STARTERS${ccMatch[1]}` : "";
+        break;
       case "leetcode":
-        return contest.name.toLowerCase().replace(/\s+/g, "-");
+        const lcName = contest.name.toLowerCase();
+        const weeklyMatch = contest.name.match(/Weekly\s+Contest\s+(\d+)/i);
+        const biweeklyMatch = contest.name.match(/Biweekly\s+Contest\s+(\d+)/i);
+
+        if (weeklyMatch) {
+          const number = weeklyMatch[1];
+          contestKey = number;
+        } else if (biweeklyMatch) {
+          const number = biweeklyMatch[1];
+          contestKey = `biweekly-contest-${number}`;
+        } else if (typeof contest.id === "string" && contest.id.length > 0) {
+          contestKey = contest.id;         
+        } else {
+          contestKey = lcName.replace(/\s+/g, "-");
+        }
+        break;
       case "codeforces":
         const cfMatch = contest.name.match(/Round\s+(\d+)/i);
         if (cfMatch) {
-          return cfMatch[1];
+          contestKey = cfMatch[1];
+        } else {
+          const edMatch = contest.name.match(/Educational.*Round\s+(\d+)/i);
+          if (edMatch) {
+            contestKey = edMatch[1];
+          } else {
+            const codetonMatch = contest.name.match(/CodeTON\s+Round\s+(\d+)/i);
+            if (codetonMatch) {
+              contestKey = codetonMatch[1];
+            }
+          }
         }
-
-        const edMatch = contest.name.match(/Educational.*Round\s+(\d+)/i);
-        if (edMatch) {
-          return edMatch[1];
-        }
-        const codetonMatch = contest.name.match(/CodeTON\s+Round\s+(\d+)/i);
-        if (codetonMatch) {
-          return codetonMatch[1];
-        }
-        return "";
+        break;
       default:
-        return "";
+        contestKey = "";
     }
+
+    return contestKey;
   };
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-4">

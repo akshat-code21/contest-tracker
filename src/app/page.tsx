@@ -39,12 +39,28 @@ export default async function Home({ params, searchParams }: PageProps) {
       const [codechefData, codeforcesData, leetcodeData] = await Promise.all([
         fetch(`${baseUrl}/api/codechef`).then((res) => res.json()),
         fetch(`${baseUrl}/api/codeforces`).then((res) => res.json()),
-        fetch(`${baseUrl}/api/leetcode`).then((res) => res.json()),
+        fetch(`${baseUrl}/api/leetcode`, {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache'
+          }
+        }).then((res) => res.json()),
       ]);
-      contests = [...codechefData, ...codeforcesData, ...leetcodeData];
+
+      contests = [
+        ...(Array.isArray(codechefData) ? codechefData : []),
+        ...(Array.isArray(codeforcesData) ? codeforcesData : []),
+        ...(Array.isArray(leetcodeData) ? leetcodeData : [])
+      ];
     } else {
-      const response = await fetch(`${baseUrl}/api/${platform}`);
-      contests = await response.json();
+      const response = await fetch(`${baseUrl}/api/${platform}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache'
+        }
+      });
+      const data = await response.json();
+      contests = Array.isArray(data) ? data : [];
     }
 
     if (searchQuery) {
