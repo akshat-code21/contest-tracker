@@ -1,9 +1,10 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { Bookmark, Globe, icons } from "lucide-react";
+import { Bookmark, FileCode, Globe, icons, Youtube } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-
+import { Button } from "./ui/button";
+import { useRouter } from "next/navigation";
 export default function PlatformFilters() {
   const buttons = [
     {
@@ -27,11 +28,17 @@ export default function PlatformFilters() {
       className: "bg-cc-secondary text-cc-primary",
     },
     {
-      icon : <Bookmark size={14} color="lightblue"/>,
-      title : "Bookmarks",
-      className : "bg-primary text-white"
-    }
+      icon: <Bookmark size={14} color="lightblue" />,
+      title: "Bookmarks",
+      className: "bg-primary text-white",
+    },
+    // {
+    //   icon : <FileCode size={14}/>,
+    //   title : "Upload YT Link",
+    //   className : "bg-primary text-white"
+    // }
   ];
+  const router = useRouter();
   const searchParams = useSearchParams();
   const platform = searchParams.get("platform");
   const isActive = (currPlatform: string) => {
@@ -111,6 +118,19 @@ export default function PlatformFilters() {
           </div>
         );
       })}
+      <Button
+        onClick={()=>{
+          router.push("/form")
+        }}
+        variant="outline"
+        className={cn(
+          "transform hover:scale-105 active:scale-95 hover:shadow-elevation-low transition-all duration-300 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white border-0",
+          "cursor-pointer flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full border border-transparent whitespace-nowrap"
+        )}
+      >
+        <Youtube className="h-4 w-4" />
+        <span>Upload YT Link</span>
+      </Button>
     </div>
   );
 }

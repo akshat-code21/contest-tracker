@@ -6,7 +6,6 @@ import {
   CardTitle,
   CardFooter,
   CardDescription,
-  CardContent,
 } from "./ui/card";
 import { Bookmark, Calendar, Clock, Youtube } from "lucide-react";
 import { Button } from "./ui/button";
