@@ -175,7 +175,7 @@ export default function ContestCard({ contests }: { contests: Contest[] }) {
     return contestKey;
   };
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 px-4">
       {contests?.length > 0 ? (
         contests.map((contest: Contest) => {
           return (
@@ -229,11 +229,11 @@ export default function ContestCard({ contests }: { contests: Contest[] }) {
                   </div>
                 </CardDescription>
               </CardHeader>
-              <CardFooter className="w-full flex flex-col sm:flex-row gap-2">
+              <CardFooter className="w-full flex flex-col gap-2">
                 <Link
                   href={contest.href}
                   target="_blank"
-                  className="w-full sm:flex-1"
+                  className="w-full"
                 >
                   <Button
                     variant="outline"
@@ -243,7 +243,7 @@ export default function ContestCard({ contests }: { contests: Contest[] }) {
                     <ExternalLink className="h-4 w-4" />
                   </Button>
                 </Link>
-                <div className="flex w-full sm:w-auto gap-2">
+                <div className="flex w-full gap-2">
                   <Button
                     variant={
                       bookmarkedContests.includes(
@@ -252,7 +252,7 @@ export default function ContestCard({ contests }: { contests: Contest[] }) {
                         ? "default"
                         : "outline"
                     }
-                    className="flex-1 sm:flex-initial flex items-center justify-center gap-2 bg-black text-white"
+                    className="flex-1 flex items-center justify-center gap-1 bg-black text-white text-xs"
                     onClick={() => handleBookmark(contest)}
                   >
                     {bookmarkedContests.includes(
@@ -274,16 +274,16 @@ export default function ContestCard({ contests }: { contests: Contest[] }) {
                   <Button
                     variant="destructive"
                     className={cn(
-                      "flex-1 sm:flex-initial flex items-center justify-center gap-2",
+                      "flex-1 flex items-center justify-center gap-1 text-xs",
                       youtubeLinks[getContestKey(contest)]
-                        ? "text-xs bg-red-600 hover:bg-red-700"
+                        ? "bg-red-600 hover:bg-red-700"
                         : "bg-gray-400 hover:bg-gray-500"
                     )}
                     onClick={() => handleYT(contest)}
                   >
                     {youtubeLinks[getContestKey(contest)]
-                      ? "Watch Solution"
-                      : "Add Solution"}
+                      ? "Watch"
+                      : "Add"}
                     <Youtube className="h-4 w-4" />
                   </Button>
                 </div>
