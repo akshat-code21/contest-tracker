@@ -11,6 +11,7 @@ export async function GET() {
     "https://www.codechef.com/api/list/contests/all?sort_by=START&sorting_order=asc&offset=0&mode=all"
   );
   const data = await response.json();
+  // console.log(data);
   const futureContests = data.future_contests;
   const presentContests = data.present_contests;
   const pastContests = data.past_contests;

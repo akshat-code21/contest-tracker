@@ -141,7 +141,7 @@ export default function ContestCard({
   };
 
   const getContestKey = (contest: Contest): string => {
-    console.log("Getting contest key for:", contest.name, contest.id);
+    // console.log("Getting contest key for:", contest.name, contest.id);
 
     let contestKey = "";
     switch (contest.platform.toLowerCase()) {
@@ -188,7 +188,7 @@ export default function ContestCard({
         contestKey = (contest.id || contest.name).toString();
     }
 
-    console.log("Generated contest key:", contestKey);
+    // console.log("Generated contest key:", contestKey);
     return contestKey;
   };
 
@@ -204,6 +204,10 @@ export default function ContestCard({
       id === contest.id
     );
   };
+
+  useEffect(()=>{
+    console.log(contests);
+  },[])
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 px-4">

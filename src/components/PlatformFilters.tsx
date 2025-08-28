@@ -139,7 +139,15 @@ export default function PlatformFilters() {
         <Youtube className="h-4 w-4" />
         <span>Upload YT Link</span>
       </Button>
-      
+      {process.env.NODE_ENV === "development" && (
+        <Button
+          onClick={testFetch}
+          variant="outline"
+          className="bg-yellow-100 hover:bg-yellow-200"
+        >
+          Test YT Fetch
+        </Button>
+      )}
     </div>
   );
 }

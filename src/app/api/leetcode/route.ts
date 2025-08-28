@@ -68,13 +68,13 @@ export async function GET() {
         cache: "no-store",
       });
 
-      console.log("Past contests response status:", pastResponse.status);
+      // console.log("Past contests response status:", pastResponse.status);
 
       if (pastResponse.ok) {
         const pastData = await pastResponse.json();
-        console.log("Past data received:", pastData ? "yes" : "no");
+        // console.log("Past data received:", pastData ? "yes" : "no");
         pastContests = pastData.data?.pastContests?.contests || [];
-        console.log(`Found ${pastContests.length} past contests`);
+        // console.log(`Found ${pastContests.length} past contests`);
       } else {
         console.error(`Failed to fetch past contests: ${pastResponse.status}`);
       }

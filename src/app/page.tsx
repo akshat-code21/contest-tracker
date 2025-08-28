@@ -28,7 +28,7 @@ export default async function Home({ params, searchParams }: PageProps) {
   let contests: Contest[] = [];
   let isBookmarksPage = false;
   let bookmarkedContestIds: string[] = [];
-  
+
   try {
     const baseUrl = process.env.NEXT_PUBLIC_API_URL
       ? process.env.NEXT_PUBLIC_API_URL
@@ -43,22 +43,8 @@ export default async function Home({ params, searchParams }: PageProps) {
       isBookmarksPage = true;
       contests = bookmarkedContests;
     } else if (!platform || platform === "all platforms") {
-      const [codechefData, codeforcesData, leetcodeData] = await Promise.all([
-        fetch(`${baseUrl}/api/codechef`).then((res) => res.json()),
-        fetch(`${baseUrl}/api/codeforces`).then((res) => res.json()),
-        fetch(`${baseUrl}/api/leetcode`, {
-          cache: 'no-store',
-          headers: {
-            'Cache-Control': 'no-cache'
-          }
-        }).then((res) => res.json()),
-      ]);
-
-      contests = [
-        ...(Array.isArray(codechefData) ? codechefData : []),
-        ...(Array.isArray(codeforcesData) ? codeforcesData : []),
-        ...(Array.isArray(leetcodeData) ? leetcodeData : [])
-      ];
+      const response = await axios.get(`${baseUrl}/api/all`);
+      contests = await response.data;
     } else {
       const response = await fetch(`${baseUrl}/api/${platform}`, {
         cache: 'no-store',
@@ -99,10 +85,10 @@ export default async function Home({ params, searchParams }: PageProps) {
       <Suspense fallback={<div>Loading search...</div>}>
         <ContestsSearch />
       </Suspense>
-      <ContestCard 
-        contests={contests} 
-        isBookmarksPage={isBookmarksPage} 
-        bookmarkedContestIds={bookmarkedContestIds} 
+      <ContestCard
+        contests={contests}
+        isBookmarksPage={isBookmarksPage}
+        bookmarkedContestIds={bookmarkedContestIds}
       />
     </div>
   );

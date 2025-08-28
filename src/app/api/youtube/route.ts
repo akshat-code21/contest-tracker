@@ -17,16 +17,16 @@ export async function GET() {
       } else if (link.platform === "leetcode") {
         if (link.contestId) {
           linkMap[link.contestId] = link.youtubeUrl;
-          console.log(
-            `Added LeetCode mapping: ${link.contestId} -> ${link.youtubeUrl}`
-          );
+          // console.log(
+          //   `Added LeetCode mapping: ${link.contestId} -> ${link.youtubeUrl}`
+          // );
 
           linkMap[link.contestId.toLowerCase()] = link.youtubeUrl;
-          console.log(
-            `Added LeetCode mapping: ${link.contestId.toLowerCase()} -> ${
-              link.youtubeUrl
-            }`
-          );
+          // console.log(
+          //   `Added LeetCode mapping: ${link.contestId.toLowerCase()} -> ${
+          //     link.youtubeUrl
+          //   }`
+          // );
 
           linkMap[link.contestId.replace(/-/g, " ")] = link.youtubeUrl;
 
@@ -50,9 +50,9 @@ export async function GET() {
 
               variations.forEach((variation) => {
                 linkMap[variation] = link.youtubeUrl;
-                console.log(
-                  `Added LeetCode weekly variation: ${variation} -> ${link.youtubeUrl}`
-                );
+                // console.log(
+                //   `Added LeetCode weekly variation: ${variation} -> ${link.youtubeUrl}`
+                // );
               });
             }
           }
