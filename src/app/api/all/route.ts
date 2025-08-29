@@ -29,7 +29,7 @@ export async function GET() {
     ...(Array.isArray(codeforcesData) ? codeforcesData : []),
     ...(Array.isArray(leetcodeData) ? leetcodeData : []),
   ];
-  console.log(typeof contests[0].startTime);
+  // console.log(typeof contests[0].startTime);
   const x = contests
     .filter((contest) => contest.status === "upcoming")
     .sort((a, b) => {
