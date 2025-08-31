@@ -15,6 +15,7 @@ import Link from "next/link";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { baseUrl } from "@/lib/constant";
 
 export default function ContestCard({ 
   contests, 
@@ -28,7 +29,7 @@ export default function ContestCard({
   const [bookmarkedContests, setBookmarkedContests] = useState<string[]>(bookmarkedContestIds);
   const [youtubeLinks, setYoutubeLinks] = useState<Record<string, string>>({});
   const router = useRouter();
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+  
 
   useEffect(() => {
     setBookmarkedContests(bookmarkedContestIds);
@@ -38,7 +39,7 @@ export default function ContestCard({
     if (bookmarkedContestIds.length === 0) {
       const loadBookmarks = async () => {
         try {
-          const response = await axios.get(`${baseUrl}/api/bookmark`);
+          const response = await axios.get(`${baseUrl}/bookmark`);
           const bookmarks = response.data;
           const uniqueBookmarkIds = [
             ...new Set(bookmarks.map((bookmark: Contest) => bookmark.id || bookmark.name)),
@@ -55,7 +56,7 @@ export default function ContestCard({
   useEffect(() => {
     const loadYoutubeLinks = async () => {
       try {
-        const response = await fetch(`${baseUrl}/api/youtube`);
+        const response = await fetch(`${baseUrl}/youtube`);
         const links = await response.json();
         setYoutubeLinks(links);
       } catch (error) {
@@ -108,7 +109,7 @@ export default function ContestCard({
       const isBookmarked = bookmarkedContests.includes(contestId.toString());
       const response = await axios({
         method: isBookmarked ? "DELETE" : "POST",
-        url: `${baseUrl}/api/bookmark`,
+        url: `${baseUrl}/bookmark`,
         data: { ...contest, id: contestId },
       });
 

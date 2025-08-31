@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/card";
 import { toast, Toaster } from "sonner";
 import { Contest } from "../types/contest";
+import { baseUrl } from "@/lib/constant";
 
 const formSchema = z.object({
   youtubeUrl: z
@@ -62,8 +63,7 @@ const UploadForm = () => {
     
     const fetchContests = async () => {
       try {
-        const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-        const response = await fetch(`${baseUrl}/api/contests`);
+        const response = await fetch(`${baseUrl}/contests`);
         if (!response.ok) {
           throw new Error('Failed to fetch contests');
         }
@@ -87,9 +87,8 @@ const UploadForm = () => {
   });
 
   const onSubmit = async (data: FormValues) => {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
     try {
-      await fetch(`${baseUrl}/api/youtube`, {
+      await fetch(`${baseUrl}/youtube`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

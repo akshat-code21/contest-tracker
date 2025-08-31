@@ -1,17 +1,18 @@
 import { Contest } from "@/app/types/contest";
 import { getDate } from "@/lib/parser";
 import { NextResponse, NextRequest } from "next/server";
+import { baseUrl } from "@/lib/constant";
 
 export async function GET() {
   let contests: Contest[] = [];
     const [codechefData, codeforcesData, leetcodeData] = await Promise.all([
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/codechef`).then((res) =>
+    fetch(`${baseUrl}/codechef`).then((res) =>
       res.json()
     ),
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/codeforces`).then((res) =>
+    fetch(`${baseUrl}/codeforces`).then((res) =>
       res.json()
     ),
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/leetcode`, {
+    fetch(`${baseUrl}/leetcode`, {
       cache: "no-store",
       headers: {
         "Cache-Control": "no-cache",

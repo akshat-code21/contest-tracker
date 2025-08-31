@@ -1,13 +1,12 @@
 import { Contest } from "@/app/types/contest";
-
+import { baseUrl } from "@/lib/constant";
 export async function GET() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
     const [codechefData, codeforcesData, leetcodeData] = await Promise.all([
-      fetch(`${baseUrl}/api/codechef`).then((res) => res.json()),
-      fetch(`${baseUrl}/api/codeforces`).then((res) => res.json()),
-      fetch(`${baseUrl}/api/leetcode`).then((res) => res.json()),
+      fetch(`${baseUrl}/codechef`).then((res) => res.json()),
+      fetch(`${baseUrl}/codeforces`).then((res) => res.json()),
+      fetch(`${baseUrl}/leetcode`).then((res) => res.json()),
     ]);
 
     const sortByStartTime = (a: Contest, b: Contest) =>
