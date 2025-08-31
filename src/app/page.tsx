@@ -9,6 +9,7 @@ import { Suspense } from "react";
 import { cookies } from "next/headers";
 import { Sun } from "lucide-react";
 import ToggleTheme from "@/components/ToggleTheme";
+import { baseUrl } from "@/lib/constant";
 
 export const metadata: Metadata = {
   title: "Contest Tracker",
@@ -30,10 +31,6 @@ export default async function Home({ params, searchParams }: PageProps) {
   let bookmarkedContestIds: string[] = [];
 
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL
-      ? process.env.NEXT_PUBLIC_API_URL
-      : "http://localhost:3000";
-
     const cookieStore = await cookies();
     const bookmarksStr = cookieStore.get('bookmarks')?.value;
     const bookmarkedContests = bookmarksStr ? JSON.parse(bookmarksStr) : [];
@@ -43,10 +40,10 @@ export default async function Home({ params, searchParams }: PageProps) {
       isBookmarksPage = true;
       contests = bookmarkedContests;
     } else if (!platform || platform === "all platforms") {
-      const response = await axios.get(`${baseUrl}/api/all`);
+      const response = await axios.get(`${baseUrl}/all`);
       contests = await response.data;
     } else {
-      const response = await fetch(`${baseUrl}/api/${platform}`, {
+      const response = await fetch(`${baseUrl}/${platform}`, {
         cache: 'no-store',
         headers: {
           'Cache-Control': 'no-cache'

@@ -6,12 +6,12 @@ import { useSearchParams } from "next/navigation";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { baseUrl } from "@/lib/constant";
 
 export default function PlatformFilters() {
   const testFetch = async () => {
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-      const response = await fetch(`${baseUrl}/api/youtube/fetch-playlist`);
+      const response = await fetch(`${baseUrl}/youtube/fetch-playlist`);
       const data = await response.json();
       toast.success(`Successfully fetched ${data.count} videos`);
     } catch (error) {
