@@ -62,7 +62,7 @@ export default function InfiniteScrollContestList({
           newContests = response.data || [];
           setHasMore(false);
         }
-      } else if (!platform || platform === "all platforms" || platform === "all") {
+      } else if (!platform || platform === "all") {
         const response = await axios.get(`${baseUrl}/all?page=${pageNum}`);
         newContests = response.data.contests || [];
         paginationData = response.data.pagination;
