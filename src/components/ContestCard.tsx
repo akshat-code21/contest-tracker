@@ -10,7 +10,7 @@ import {
 import { Bookmark, Calendar, Clock, CloudCog, Mail, Youtube } from "lucide-react";
 import { Button } from "./ui/button";
 import { ExternalLink } from "lucide-react";
-import { Contest } from "@/app/types/contest";
+import { Contest } from "@/types/contest";
 import Link from "next/link";
 import axios from "axios";
 import { useState, useEffect } from "react";
@@ -26,7 +26,9 @@ export interface SelectedContest {
   duration: string;
   platformName: string;
   contestLink: string;
-}import { baseUrl } from "@/lib/constant";
+}
+
+import { baseUrl } from "@/lib/constant";
 
 export default function ContestCard({
   contests,
@@ -42,7 +44,7 @@ export default function ContestCard({
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [contestSelected, setContestSelected] = useState<SelectedContest>();
   const router = useRouter();
-  
+
 
   useEffect(() => {
     setBookmarkedContests(bookmarkedContestIds);
@@ -241,16 +243,16 @@ export default function ContestCard({
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-        const response = await axios.post(`${baseUrl}/api/reminder`, {
-            ...values,
-            ...contestSelected
-        });
-        
-        if (response.status === 200) {
-            console.log("Email reminder set successfully");
-        }
+      const response = await axios.post(`${baseUrl}/api/reminder`, {
+        ...values,
+        ...contestSelected
+      });
+
+      if (response.status === 200) {
+        console.log("Email reminder set successfully");
+      }
     } catch (error) {
-        console.error("Error sending reminder:", error);
+      console.error("Error sending reminder:", error);
     }
   }
 
@@ -267,7 +269,7 @@ export default function ContestCard({
         />
       )}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 px-4">
-        {contests?.length > 0 ? (
+        {contests?.length > 0 && (
           contests.map((contest: Contest) => {
             const bookmarked = isContestBookmarked(contest);
             return (
@@ -378,12 +380,7 @@ export default function ContestCard({
                 </CardFooter>
               </Card>
             );
-          })
-        ) : (
-          <div className="col-span-full flex justify-center items-center text-4xl py-12">
-            No Contests Found.
-          </div>
-        )}
+          }))}
       </div>
     </>
   );
