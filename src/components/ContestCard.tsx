@@ -24,6 +24,7 @@ import { formatDateClient } from "@/lib/formatDateClient";
 export interface SelectedContest {
   contestName: string;
   startTime: string;
+  startTimeISO: string; // Raw ISO timestamp for server processing
   duration: string;
   platformName: string;
   contestLink: string;
@@ -222,10 +223,10 @@ export default function ContestCard({
     );
   };
 
-  const handleSendEmail = (contestName: string, startTime: string, duration: string, platformName: string, contestLink: string) => {
+  const handleSendEmail = (contestName: string, startTime: string, startTimeISO: string, duration: string, platformName: string, contestLink: string) => {
     setIsModalOpen(true);
     setContestSelected({
-      contestName, contestLink, startTime, duration, platformName
+      contestName, contestLink, startTime, startTimeISO, duration, platformName
     })
   }
 
@@ -342,7 +343,7 @@ export default function ContestCard({
                     <Button
                       variant="outline"
                       className="flex-1/2 items-center justify-center gap-2 bg-white dark:bg-white dark:text-black dark:hover:text-white dark:hover:bg-black"
-                      onClick={() => handleSendEmail(contest.name, contest.startTime, contest.duration, contest.platform, contest.href)}
+                      onClick={() => handleSendEmail(contest.name, formatDateClient(contest.startTimeISO), contest.startTimeISO, contest.duration, contest.platform, contest.href)}
                     >
                       Receive Reminder
                       <Mail className="h-4 w-4" />

@@ -1,5 +1,4 @@
 import { Contest } from "@/types/contest";
-import parseDateString from "@/lib/parseDateString";
 
 interface CodeForcesContests {
   id: number;
@@ -40,7 +39,7 @@ export async function GET() {
         platform: "CodeForces",
         status: status,
         name: contest.name,
-        startTime: parseDateString(isoDate),
+        startTime: isoDate,
         startTimeISO: isoDate,
         duration: contest.durationSeconds / 3600 + " hours",
         href: `https://codeforces.com/contest/${Number(contest.id)}`,

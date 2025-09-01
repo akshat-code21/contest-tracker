@@ -1,5 +1,3 @@
-import parseDateString from "@/lib/parseDateString";
-
 interface LeetCodeContest {
   title: string;
   titleSlug: string;
@@ -101,7 +99,7 @@ export async function GET() {
         platform: "LeetCode",
         status,
         name: contest.title,
-        startTime: parseDateString(isoDate),
+        startTime: isoDate,
         startTimeISO: isoDate,
         duration: `${Math.floor(contest.duration / 3600)} hours`,
         href: `https://leetcode.com/contest/${contest.titleSlug || ""}`,
