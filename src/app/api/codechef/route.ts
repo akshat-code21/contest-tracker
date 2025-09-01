@@ -22,6 +22,7 @@ export async function GET() {
     status: status,
     name: contest.contest_name,
     startTime: parseDateString(contest.contest_start_date_iso),
+    startTimeISO: contest.contest_start_date_iso,
     duration: parseDuration(contest.contest_duration) + " hours",
     href: `https://www.codechef.com/${contest.contest_code}`,
   });

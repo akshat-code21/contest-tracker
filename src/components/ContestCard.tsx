@@ -19,6 +19,7 @@ import EmailPopover from "./EmailPopover";
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { formatDateClient } from "@/lib/formatDateClient";
 
 export interface SelectedContest {
   contestName: string;
@@ -313,7 +314,7 @@ export default function ContestCard({
                       <div>
                         <Calendar size={16} />
                       </div>
-                      <div>{contest.startTime}</div>
+                      <div>{formatDateClient(contest.startTimeISO)}</div>
                     </div>
                     <div className="flex items-center gap-2">
                       <div>
