@@ -85,6 +85,10 @@ export async function POST(req: NextRequest) {
 
     await transporter.sendMail(mailOptions);
 
+    // Parse the startTime string to create a proper Date object
+    // The startTime comes as "Sep 1, 2025, 12:30 PM" but should be interpreted as UTC
+    const startTimeDate = new Date(startTime + " UTC");
+
     await collection.insertOne({
       email: email,
       name: name,
@@ -93,7 +97,7 @@ export async function POST(req: NextRequest) {
       duration,
       contestLink,
       platformName,
-      formattedStartTime : new Date(startTime)
+      formattedStartTime : startTimeDate
     });
 
     return NextResponse.json(
