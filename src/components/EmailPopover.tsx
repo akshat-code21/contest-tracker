@@ -47,7 +47,8 @@ export default function EmailPopover({
             duration: "",
             contestLink: "",
             platformName: "",
-            startTime: ""
+            startTime: "",
+            startTimeISO: ""
         });
     };
 

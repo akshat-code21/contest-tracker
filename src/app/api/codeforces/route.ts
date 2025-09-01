@@ -1,5 +1,4 @@
 import { Contest } from "@/types/contest";
-import parseDateString from "@/lib/parseDateString";
 
 interface CodeForcesContests {
   id: number;
@@ -33,17 +32,19 @@ export async function GET() {
     const getFormattedContest = (
       contest: CodeForcesContests,
       status: string
-    ) => ({
-      id: contest.id,
-      platform: "CodeForces",
-      status: status,
-      name: contest.name,
-      startTime: parseDateString(
-        new Date(contest.startTimeSeconds * 1000).toISOString()
-      ),
-      duration: contest.durationSeconds / 3600 + " hours",
-      href: `https://codeforces.com/contest/${Number(contest.id)}`,
-    });
+    ) => {
+      const isoDate = new Date(contest.startTimeSeconds * 1000).toISOString();
+      return {
+        id: contest.id,
+        platform: "CodeForces",
+        status: status,
+        name: contest.name,
+        startTime: isoDate,
+        startTimeISO: isoDate,
+        duration: contest.durationSeconds / 3600 + " hours",
+        href: `https://codeforces.com/contest/${Number(contest.id)}`,
+      };
+    };
 
     const formattedContests: Contest[] = [
       ...futureContests.map((contest: CodeForcesContests) =>
@@ -62,21 +63,21 @@ export async function GET() {
       .filter((contest) => contest.status === "upcoming")
       .sort(
         (a, b) =>
-          new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
+          new Date(a.startTimeISO).getTime() - new Date(b.startTimeISO).getTime()
       );
 
     const sortedOngoing = formattedContests
       .filter((contest) => contest.status === "ongoing")
       .sort(
         (a, b) =>
-          new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
+          new Date(a.startTimeISO).getTime() - new Date(b.startTimeISO).getTime()
       );
 
     const sortedCompleted = formattedContests
       .filter((contest) => contest.status === "completed")
       .sort(
         (a, b) =>
-          new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
+          new Date(a.startTimeISO).getTime() - new Date(b.startTimeISO).getTime()
       );
 
     const allSortedContests = [

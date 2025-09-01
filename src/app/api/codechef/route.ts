@@ -1,4 +1,3 @@
-import parseDateString from "@/lib/parseDateString";
 import parseDuration from "@/lib/parseDuration";
 interface CodeChefContest {
   contest_code: number;
@@ -21,7 +20,8 @@ export async function GET() {
     platform: "CodeChef",
     status: status,
     name: contest.contest_name,
-    startTime: parseDateString(contest.contest_start_date_iso),
+    startTime: contest.contest_start_date_iso,
+    startTimeISO: contest.contest_start_date_iso,
     duration: parseDuration(contest.contest_duration) + " hours",
     href: `https://www.codechef.com/${contest.contest_code}`,
   });

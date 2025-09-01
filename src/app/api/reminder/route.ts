@@ -13,6 +13,7 @@ export async function POST(req: NextRequest) {
     email,
     contestName,
     startTime,
+    startTimeISO,
     duration,
     platformName,
     contestLink,
@@ -25,6 +26,7 @@ export async function POST(req: NextRequest) {
     !email ||
     !contestName ||
     !startTime ||
+    !startTimeISO ||
     !duration ||
     !platformName ||
     !contestLink
@@ -51,19 +53,16 @@ export async function POST(req: NextRequest) {
       "utf-8",
     );
 
-    const startDateTime = new Date(startTime);
-    const formattedDate = startDateTime.toLocaleDateString("en-US", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-    const formattedTime = startDateTime.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
-
+    const startDateTime = new Date(startTimeISO);
     const timeUntil = getTimeUntil(startDateTime);
+
+    const timeMatch = startTime.match(/(\w+ \d+, \d+), (.+)/);
+    const formattedDate = timeMatch
+      ? timeMatch[1]
+      : startTime.split(",")[0] + "," + startTime.split(",")[1];
+    const formattedTime = timeMatch
+      ? timeMatch[2]
+      : startTime.split(", ").pop();
 
     emailTemplate = emailTemplate
       .replace(/\{\{CONTEST_NAME\}\}/g, contestName)
@@ -90,11 +89,12 @@ export async function POST(req: NextRequest) {
       email: email,
       name: name,
       startTime,
+      startTimeISO,
       contestName,
       duration,
       contestLink,
       platformName,
-      formattedStartTime : new Date(startTime)
+      formattedStartTime: new Date(startTimeISO),
     });
 
     return NextResponse.json(

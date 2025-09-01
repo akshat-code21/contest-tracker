@@ -10,7 +10,7 @@ export async function GET() {
     ]);
 
     const sortByStartTime = (a: Contest, b: Contest) =>
-      new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
+      new Date(a.startTimeISO).getTime() - new Date(b.startTimeISO).getTime();
 
     const sortedCodechef = codechefData.sort(sortByStartTime);
     const sortedCodeforces = codeforcesData.sort(sortByStartTime);

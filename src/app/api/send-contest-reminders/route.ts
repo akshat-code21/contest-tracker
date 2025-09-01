@@ -10,14 +10,14 @@ export async function GET() {
     const collection = db.collection("reminders");
 
     const now = new Date();
-    const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
+    const oneHourFromNow = new Date(now.getTime() + 60 * 60 * 1000);
 
     const contests = await collection
       .find({
-        formattedStartTime: {
-          $gt: now,
-          $lte: oneHourLater,
-        },
+        $and: [
+          { formattedStartTime: { $gt: now } },
+          { formattedStartTime: { $lte: oneHourFromNow } },
+        ],
       })
       .toArray();
 
@@ -50,37 +50,32 @@ export async function GET() {
     const templatePath = process.cwd() + "/public/one-hour-reminder-email.html";
     const baseTemplate = fs.readFileSync(templatePath, "utf-8");
 
-    await Promise.all(
+    const emailResults = await Promise.allSettled(
       details.map(async (detail) => {
         const emailTemplate = baseTemplate
           .replace(/\{\{CONTEST_NAME\}\}/g, detail.contestName)
           .replace(/\{\{PLATFORM_NAME\}\}/g, detail.platform)
           .replace(/\{\{CONTEST_URL\}\}/g, detail.contestUrl)
-          .replace(
-            /\{\{START_TIME\}\}/g,
-            new Date(detail.startTime).toLocaleTimeString("en-US", {
-              hour: "2-digit",
-              minute: "2-digit",
-              hour12: true,
-            }),
-          )
+          .replace(/\{\{START_TIME\}\}/g, detail.startTime)
           .replace(/\{\{DURATION\}\}/g, detail.duration);
 
         const mailOptions = {
           from: process.env.NEXT_PUBLIC_FROM_EMAIL,
           to: detail.email,
-          subject: `Your contests starts in 1hr : ${detail.contestName}`,
+          subject: `Your contest starts in 1hr: ${detail.contestName}`,
           html: emailTemplate,
         };
 
-        return transporter.sendMail(mailOptions);
+        const emailResult = await transporter.sendMail(mailOptions);
+
+        return emailResult;
       }),
     );
 
     return NextResponse.json({
-      message: "Reminders sent successfully",
-      count: details.length,
-      contests,
+      message: `Reminders processed`,
+      totalProcessed: details.length,
+      contests: details,
     });
   } catch (error) {
     console.error("Error sending reminders:", error);

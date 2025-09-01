@@ -31,8 +31,8 @@ export async function GET(req: NextRequest) {
   const x = contests
     .filter((contest) => contest.status === "upcoming")
     .sort((a, b) => {
-      const da = getDate(a.startTime);
-      const db = getDate(b.startTime);
+      const da = getDate(a.startTimeISO);
+      const db = getDate(b.startTimeISO);
       return da - db;
     });
   const y = contests.filter((contest) => contest.status !== "upcoming");

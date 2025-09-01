@@ -1,5 +1,3 @@
-import parseDateString from "@/lib/parseDateString";
-
 interface LeetCodeContest {
   title: string;
   titleSlug: string;
@@ -94,12 +92,15 @@ export async function GET() {
         status = "completed";
       }
 
+      const isoDate = new Date(startTimeMs).toISOString();
+
       return {
         id: contest.titleSlug || `leetcode-contest-${startTimeMs}`,
         platform: "LeetCode",
         status,
         name: contest.title,
-        startTime: parseDateString(new Date(startTimeMs).toISOString()),
+        startTime: isoDate,
+        startTimeISO: isoDate,
         duration: `${Math.floor(contest.duration / 3600)} hours`,
         href: `https://leetcode.com/contest/${contest.titleSlug || ""}`,
       };
@@ -115,8 +116,8 @@ export async function GET() {
     );
 
     uniqueContests.sort((a, b) => {
-      const dateA = new Date(a.startTime).getTime();
-      const dateB = new Date(b.startTime).getTime();
+      const dateA = new Date(a.startTimeISO).getTime();
+      const dateB = new Date(b.startTimeISO).getTime();
       return dateB - dateA;
     });
 
