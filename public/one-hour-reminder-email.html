@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contest Starting Soon - {{CONTEST_NAME}}</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        line-height: 1.6;
+        color: #1e293b;
+        background-color: #f8fafc;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .header {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+      }
+
+      .logo {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 10px;
+      }
+
+      .urgent-banner {
+        background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+        color: white;
+        padding: 15px;
+        text-align: center;
+        font-weight: 600;
+        font-size: 16px;
+        border-left: 4px solid #fbbf24;
+      }
+
+      .content {
+        padding: 40px 30px;
+      }
+
+      .contest-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 10px;
+        text-align: center;
+      }
+
+      .time-warning {
+        background: #fef3c7;
+        border: 2px solid #f59e0b;
+        border-radius: 12px;
+        padding: 20px;
+        margin: 25px 0;
+        text-align: center;
+      }
+
+      .time-warning .clock {
+        font-size: 48px;
+        margin-bottom: 15px;
+      }
+
+      .time-warning h2 {
+        color: #92400e;
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      .time-warning p {
+        color: #78350f;
+        font-weight: 500;
+      }
+
+      .contest-details {
+        background: #f1f5f9;
+        border-radius: 12px;
+        padding: 25px;
+        margin: 25px 0;
+      }
+
+      .detail-row:last-child td {
+        border-bottom: none;
+      }
+
+      .detail-label {
+        font-weight: 600;
+        color: #475569;
+        font-size: 14px;
+      }
+
+      .detail-value {
+        font-weight: 500;
+        color: #1e293b;
+        text-align: right;
+      }
+
+      .platform-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .platform-codeforces {
+        background-color: #1976d2;
+        color: white;
+      }
+
+      .platform-codechef {
+        background-color: #8d4004;
+        color: white;
+      }
+
+      .platform-atcoder {
+        background-color: #000000;
+        color: white;
+      }
+
+      .platform-leetcode {
+        background-color: #f89f00;
+        color: white;
+      }
+
+      .platform-other {
+        background-color: #6b7280;
+        color: white;
+      }
+
+      .cta-section {
+        text-align: center;
+        margin: 35px 0;
+      }
+
+      .cta-button {
+        display: inline-block;
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        color: white;
+        text-decoration: none;
+        padding: 16px 32px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 16px;
+        margin: 10px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(30, 41, 59, 0.3);
+      }
+
+      .cta-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(30, 41, 59, 0.4);
+      }
+
+      .cta-secondary {
+        background: transparent;
+        color: #1e293b;
+        border: 2px solid #1e293b;
+      }
+
+      .quick-tips {
+        background: #eff6ff;
+        border-left: 4px solid #3b82f6;
+        padding: 20px;
+        margin: 25px 0;
+        border-radius: 0 8px 8px 0;
+      }
+
+      .quick-tips h3 {
+        color: #1e40af;
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 12px;
+      }
+
+      .quick-tips ul {
+        color: #1e3a8a;
+        padding-left: 20px;
+      }
+
+      .quick-tips li {
+        margin-bottom: 8px;
+      }
+
+      .footer {
+        background-color: #f8fafc;
+        padding: 30px;
+        text-align: center;
+        border-top: 1px solid #e2e8f0;
+      }
+
+      .footer p {
+        color: #64748b;
+        font-size: 14px;
+        margin-bottom: 15px;
+      }
+
+      .social-links {
+        margin: 20px 0;
+      }
+
+      .social-links a {
+        color: #64748b;
+        text-decoration: none;
+        margin: 0 15px;
+        font-size: 14px;
+      }
+
+      .unsubscribe {
+        color: #94a3b8;
+        font-size: 12px;
+        margin-top: 20px;
+      }
+
+      .unsubscribe a {
+        color: #64748b;
+        text-decoration: underline;
+      }
+
+      @media (max-width: 600px) {
+        .container {
+          margin: 0;
+          box-shadow: none;
+        }
+
+        .content {
+          padding: 30px 20px;
+        }
+
+        .header {
+          padding: 25px 20px;
+        }
+
+        .contest-title {
+          font-size: 24px;
+        }
+
+        .time-warning .clock {
+          font-size: 36px;
+        }
+
+        .detail-value {
+          text-align: left;
+        }
+
+        .cta-button {
+          display: block;
+          margin: 10px 0;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <div class="logo">contestracker.me</div>
+      </div>
+
+      <!-- Urgent Banner -->
+      <div class="urgent-banner">⚡ URGENT: Contest starting in 1 hour! ⚡</div>
+
+      <!-- Main Content -->
+      <div class="content">
+        <h1 class="contest-title">{{CONTEST_NAME}}</h1>
+
+        <!-- Time Warning -->
+        <div class="time-warning">
+          <div class="clock">⏰</div>
+          <h2>Starting in 1 Hour!</h2>
+          <p>Don't miss out on this contest. Get ready now!</p>
+        </div>
+
+        <!-- Contest Details -->
+        <div class="contest-details">
+          <table width="100%" cellpadding="0" cellspacing="0" style="width: 100%;">
+            <tr class="detail-row">
+              <td class="detail-label" style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #475569; font-size: 14px; width: 40%;">Platform</td>
+              <td class="detail-value" style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; font-weight: 500; color: #1e293b; text-align: right; width: 60%;">
+                {{PLATFORM_NAME}}
+              </td>
+            </tr>
+            <tr class="detail-row">
+              <td class="detail-label" style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #475569; font-size: 14px; width: 40%;">Start Time</td>
+              <td class="detail-value" style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; font-weight: 500; color: #1e293b; text-align: right; width: 60%;">{{START_TIME}}</td>
+            </tr>
+            <tr class="detail-row">
+              <td class="detail-label" style="padding: 12px 0; font-weight: 600; color: #475569; font-size: 14px; width: 40%;">Duration</td>
+              <td class="detail-value" style="padding: 12px 0; font-weight: 500; color: #1e293b; text-align: right; width: 60%;">{{DURATION}}</td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="cta-section">
+          <a href="{{CONTEST_URL}}" class="cta-button"> 🚀 Join Contest Now </a>
+          <br />
+        </div>
+
+        <!-- Quick Tips -->
+        <div class="quick-tips">
+          <h3>🎯 Last Minute Preparation Tips</h3>
+          <ul>
+            <li>Check your internet connection</li>
+            <li>Have your IDE/editor ready</li>
+            <li>Review common algorithms and data structures</li>
+            <li>Stay hydrated and focused</li>
+            <li>Read problem statements carefully</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <p style="margin: 0 0 10px; font-size: 14px; color: #888888">
+          This reminder was sent from
+          <a
+            href="https://contestracker.me"
+            target="_blank"
+            style="text-decoration: none; color: inherit"
+          >
+            contestracker.me</a
+          >
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
