@@ -1,15 +1,10 @@
 import { Metadata } from "next";
-import ContestCard from "@/components/ContestCard";
+import InfiniteScrollContestList from "@/components/InfiniteScrollContestList";
 import ContestsSearch from "@/components/ContestsSearch";
 import Header from "@/components/Header";
 import PlatFormFilters from "@/components/PlatformFilters";
-import axios from "axios";
-import { Contest } from "./types/contest";
 import { Suspense } from "react";
-import { cookies } from "next/headers";
-import { Sun } from "lucide-react";
 import ToggleTheme from "@/components/ToggleTheme";
-import { baseUrl } from "@/lib/constant";
 
 export const metadata: Metadata = {
   title: "Contest Tracker",
@@ -23,48 +18,9 @@ type PageProps = {
 
 export default async function Home({ params, searchParams }: PageProps) {
   const searchParamsResolved = await searchParams;
-  const platform = searchParamsResolved?.platform?.toString().toLowerCase();
-  const searchQuery = searchParamsResolved?.contest?.toString();
-
-  let contests: Contest[] = [];
-  let isBookmarksPage = false;
-  let bookmarkedContestIds: string[] = [];
-
-  try {
-    const cookieStore = await cookies();
-    const bookmarksStr = cookieStore.get('bookmarks')?.value;
-    const bookmarkedContests = bookmarksStr ? JSON.parse(bookmarksStr) : [];
-    bookmarkedContestIds = bookmarkedContests.map((contest: Contest) => contest.id || contest.name);
-
-    if (platform === "bookmarks") {
-      isBookmarksPage = true;
-      contests = bookmarkedContests;
-    } else if (!platform || platform === "all platforms") {
-      const response = await axios.get(`${baseUrl}/all`);
-      contests = await response.data;
-    } else {
-      const response = await fetch(`${baseUrl}/${platform}`, {
-        cache: 'no-store',
-        headers: {
-          'Cache-Control': 'no-cache'
-        }
-      });
-      const data = await response.json();
-      contests = Array.isArray(data) ? data : [];
-    }
-
-    if (searchQuery) {
-      contests = contests.filter(
-        (contest) =>
-          contest.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          contest.platform.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          contest.id.toString().includes(searchQuery.toString())
-      );
-    }
-  } catch (error) {
-    console.error("Error fetching contests:", error);
-    contests = [];
-  }
+  const platform = searchParamsResolved?.platform?.toString().toLowerCase() || "";
+  const searchQuery = searchParamsResolved?.contest?.toString() || "";
+  const isBookmarksPage = platform === "bookmarks";
 
   return (
     <div className="font-[family-name:var(--font-geist-sans)] min-h-screen">
@@ -82,10 +38,10 @@ export default async function Home({ params, searchParams }: PageProps) {
       <Suspense fallback={<div>Loading search...</div>}>
         <ContestsSearch />
       </Suspense>
-      <ContestCard
-        contests={contests}
+      <InfiniteScrollContestList
+        platform={platform}
+        searchQuery={searchQuery}
         isBookmarksPage={isBookmarksPage}
-        bookmarkedContestIds={bookmarkedContestIds}
       />
     </div>
   );

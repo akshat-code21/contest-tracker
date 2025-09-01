@@ -7,29 +7,44 @@ import {
   CardFooter,
   CardDescription,
 } from "./ui/card";
-import { Bookmark, Calendar, Clock, CloudCog, Youtube } from "lucide-react";
+import { Bookmark, Calendar, Clock, CloudCog, Mail, Youtube } from "lucide-react";
 import { Button } from "./ui/button";
 import { ExternalLink } from "lucide-react";
-import { Contest } from "@/app/types/contest";
+import { Contest } from "@/types/contest";
 import Link from "next/link";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import EmailPopover from "./EmailPopover";
+import z from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+export interface SelectedContest {
+  contestName: string;
+  startTime: string;
+  duration: string;
+  platformName: string;
+  contestLink: string;
+}
+
 import { baseUrl } from "@/lib/constant";
 
-export default function ContestCard({ 
-  contests, 
+export default function ContestCard({
+  contests,
   isBookmarksPage = false,
   bookmarkedContestIds = []
-}: { 
+}: {
   contests: Contest[],
   isBookmarksPage?: boolean,
   bookmarkedContestIds?: string[]
 }) {
   const [bookmarkedContests, setBookmarkedContests] = useState<string[]>(bookmarkedContestIds);
   const [youtubeLinks, setYoutubeLinks] = useState<Record<string, string>>({});
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [contestSelected, setContestSelected] = useState<SelectedContest>();
   const router = useRouter();
-  
+
 
   useEffect(() => {
     setBookmarkedContests(bookmarkedContestIds);
@@ -162,7 +177,7 @@ export default function ContestCard({
           const number = biweeklyMatch[1];
           contestKey = `biweekly-contest-${number}`;
         } else if (typeof contest.id === "string" && contest.id.length > 0) {
-          contestKey = contest.id;         
+          contestKey = contest.id;
         } else {
           contestKey = lcName.replace(/\s+/g, "-");
         }
@@ -195,130 +210,178 @@ export default function ContestCard({
 
   const isContestBookmarked = (contest: Contest) => {
     const contestId = (contest.id || contest.name).toString();
-    
+
     if (isBookmarksPage) {
       return true;
     }
-    return bookmarkedContests.some(id => 
-      id === contestId || 
-      id === contest.name || 
+    return bookmarkedContests.some(id =>
+      id === contestId ||
+      id === contest.name ||
       id === contest.id
     );
   };
 
-  useEffect(()=>{
-    console.log(contests);
-  },[])
+  const handleSendEmail = (contestName: string, startTime: string, duration: string, platformName: string, contestLink: string) => {
+    setIsModalOpen(true);
+    setContestSelected({
+      contestName, contestLink, startTime, duration, platformName
+    })
+  }
+
+  const formSchema = z.object({
+    name: z.string().min(2).max(50),
+    email: z.string().email()
+  })
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      email: ""
+    },
+  })
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      const response = await axios.post(`${baseUrl}/api/reminder`, {
+        ...values,
+        ...contestSelected
+      });
+
+      if (response.status === 200) {
+        console.log("Email reminder set successfully");
+      }
+    } catch (error) {
+      console.error("Error sending reminder:", error);
+    }
+  }
+
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 px-4">
-      {contests?.length > 0 ? (
-        contests.map((contest: Contest) => {
-          const bookmarked = isContestBookmarked(contest);
-          return (
-            <Card
-              key={contest.id || contest.name}
-              className={cn("flex flex-col items-start w-full relative group")}
-            >
-              <div
-                className={cn(
-                  "absolute top-0 left-0 right-0 h-1 rounded-t-xl",
-                  checkPlatformForBg(contest.platform.toLowerCase()),
-                  "transition-all duration-300",
-                  "group-hover:h-2.5"
-                )}
-              />
-              <CardHeader className="flex flex-col w-full">
-                <div className={cn("w-full h-3")}></div>
-                <div className="flex justify-between items-center w-full">
-                  <div
-                    className={cn(
-                      `${checkPlatform(contest.platform.toLowerCase())}`,
-                      "rounded-sm px-2 py-1 text-sm font-medium"
-                    )}
-                  >
-                    {contest.platform}
-                  </div>
-                  <div
-                    className={cn(
-                      `${checkStatus(contest.status.toLowerCase())}`,
-                      "rounded-sm px-2 py-1 text-sm font-medium uppercase"
-                    )}
-                  >
-                    {contest.status}
-                  </div>
-                </div>
-                <CardTitle className="font-medium mt-2">
-                  {contest.name}
-                </CardTitle>
-                <CardDescription className="mt-2 flex flex-col gap-y-2">
-                  <div className="flex items-center gap-2">
-                    <div>
-                      <Calendar size={16} />
-                    </div>
-                    <div>{contest.startTime}</div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div>
-                      <Clock size={16} />
-                    </div>
-                    <div>{contest.duration}</div>
-                  </div>
-                </CardDescription>
-              </CardHeader>
-              <CardFooter className="w-full flex flex-col gap-2">
-                <Link
-                  href={contest.href}
-                  target="_blank"
-                  className="w-full"
-                >
-                  <Button
-                    variant="outline"
-                    className="w-full flex items-center justify-center gap-2 bg-white dark:bg-white dark:text-black dark:hover:text-white dark:hover:bg-black"
-                  >
-                    Visit {contest.platform}
-                    <ExternalLink className="h-4 w-4" />
-                  </Button>
-                </Link>
-                <div className="flex w-full gap-2">
-                  <Button
-                    variant={bookmarked ? "default" : "outline"}
-                    className="flex-1 flex items-center justify-center gap-1 bg-black text-white text-xs"
-                    onClick={() => handleBookmark(contest)}
-                  >
-                    {bookmarked ? "Bookmarked" : "Bookmark"}
-                    <Bookmark
-                      className={cn(
-                        "h-4 w-4",
-                        bookmarked ? "fill-current" : ""
-                      )}
-                    />
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    className={cn(
-                      "flex-1 flex items-center justify-center gap-1 text-xs",
-                      youtubeLinks[getContestKey(contest)]
-                        ? "bg-red-600 hover:bg-red-700"
-                        : "bg-gray-400 hover:bg-gray-500"
-                    )}
-                    onClick={() => handleYT(contest)}
-                  >
-                    {youtubeLinks[getContestKey(contest)]
-                      ? "Watch"
-                      : "Add"}
-                    <Youtube className="h-4 w-4" />
-                  </Button>
-                </div>
-              </CardFooter>
-            </Card>
-          );
-        })
-      ) : (
-        <div className="col-span-full flex justify-center items-center text-4xl py-12">
-          No Contests Found.
-        </div>
+    <>
+      {isModalOpen && (
+        <EmailPopover
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+          form={form}
+          onSubmit={onSubmit}
+          setContestSelected={setContestSelected}
+        />
       )}
-    </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 px-4">
+        {contests?.length > 0 && (
+          contests.map((contest: Contest) => {
+            const bookmarked = isContestBookmarked(contest);
+            return (
+              <Card
+                key={contest.id || contest.name}
+                className={cn("flex flex-col items-start w-full relative group")}
+              >
+                <div
+                  className={cn(
+                    "absolute top-0 left-0 right-0 h-1 rounded-t-xl",
+                    checkPlatformForBg(contest.platform.toLowerCase()),
+                    "transition-all duration-300",
+                    "group-hover:h-2.5"
+                  )}
+                />
+                <CardHeader className="flex flex-col w-full">
+                  <div className={cn("w-full h-3")}></div>
+                  <div className="flex justify-between items-center w-full">
+                    <div
+                      className={cn(
+                        `${checkPlatform(contest.platform.toLowerCase())}`,
+                        "rounded-sm px-2 py-1 text-sm font-medium"
+                      )}
+                    >
+                      {contest.platform}
+                    </div>
+                    <div
+                      className={cn(
+                        `${checkStatus(contest.status.toLowerCase())}`,
+                        "rounded-sm px-2 py-1 text-sm font-medium uppercase"
+                      )}
+                    >
+                      {contest.status}
+                    </div>
+                  </div>
+                  <CardTitle className="font-medium mt-2">
+                    {contest.name}
+                  </CardTitle>
+                  <CardDescription className="mt-2 flex flex-col gap-y-2">
+                    <div className="flex items-center gap-2">
+                      <div>
+                        <Calendar size={16} />
+                      </div>
+                      <div>{contest.startTime}</div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div>
+                        <Clock size={16} />
+                      </div>
+                      <div>{contest.duration}</div>
+                    </div>
+                  </CardDescription>
+                </CardHeader>
+                <CardFooter className="w-full flex flex-col gap-2">
+                  <div className="flex w-full gap-2">
+                    <Link
+                      href={contest.href}
+                      target="_blank"
+                      className="flex-1/2"
+                    >
+                      <Button
+                        variant="outline"
+                        className="w-full flex items-center justify-center gap-2 bg-white dark:bg-white dark:text-black dark:hover:text-white dark:hover:bg-black"
+                      >
+                        Visit {contest.platform}
+                        <ExternalLink className="h-4 w-4" />
+                      </Button>
+                    </Link>
+                    <Button
+                      variant="outline"
+                      className="flex-1/2 items-center justify-center gap-2 bg-white dark:bg-white dark:text-black dark:hover:text-white dark:hover:bg-black"
+                      onClick={() => handleSendEmail(contest.name, contest.startTime, contest.duration, contest.platform, contest.href)}
+                    >
+                      Receive Reminder
+                      <Mail className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <div className="flex w-full gap-2">
+                    <Button
+                      variant={bookmarked ? "default" : "outline"}
+                      className="flex-1 flex items-center justify-center gap-1 bg-black text-white text-xs"
+                      onClick={() => handleBookmark(contest)}
+                    >
+                      {bookmarked ? "Bookmarked" : "Bookmark"}
+                      <Bookmark
+                        className={cn(
+                          "h-4 w-4",
+                          bookmarked ? "fill-current" : ""
+                        )}
+                      />
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      className={cn(
+                        "flex-1 flex items-center justify-center gap-1 text-xs",
+                        youtubeLinks[getContestKey(contest)]
+                          ? "bg-red-600 hover:bg-red-700"
+                          : "bg-gray-400 hover:bg-gray-500"
+                      )}
+                      onClick={() => handleYT(contest)}
+                    >
+                      {youtubeLinks[getContestKey(contest)]
+                        ? "Watch"
+                        : "Add"}
+                      <Youtube className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </CardFooter>
+              </Card>
+            );
+          }))}
+      </div>
+    </>
   );
 }

@@ -32,7 +32,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { toast, Toaster } from "sonner";
-import { Contest } from "../types/contest";
+import { Contest } from "../../types/contest";
 import { baseUrl } from "@/lib/constant";
 
 const formSchema = z.object({

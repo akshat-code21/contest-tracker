@@ -1,4 +1,4 @@
-import { Contest } from "@/app/types/contest";
+import { Contest } from "@/types/contest";
 import { baseUrl } from "@/lib/constant";
 export async function GET() {
   try {

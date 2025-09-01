@@ -1,0 +1,625 @@
+<!doctype html>
+<html
+  lang="en"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:v="urn:schemas-microsoft-com:vml"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <title>Contest Reminder - {{CONTEST_NAME}}</title>
+
+    <!--[if mso]>
+      <noscript>
+        <xml>
+          <o:OfficeDocumentSettings>
+            <o:AllowPNG />
+            <o:PixelsPerInch>96</o:PixelsPerInch>
+          </o:OfficeDocumentSettings>
+        </xml>
+      </noscript>
+    <![endif]-->
+
+    <style>
+      /* Import Geist font */
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+      /* Note: Geist is not available on Google Fonts, so we use Inter as a similar alternative */
+      /* If you have Geist hosted, replace the URL above with your Geist font URL */
+
+      /* Reset styles with Geist font family */
+      table,
+      td,
+      div,
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6,
+      p {
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          "Helvetica Neue",
+          Arial,
+          sans-serif;
+      }
+
+      /* Client-specific styles */
+      .ReadMsgBody {
+        width: 100%;
+      }
+      .ExternalClass {
+        width: 100%;
+      }
+      .ExternalClass * {
+        line-height: 100%;
+      }
+
+      /* Remove spacing around the email design */
+      table,
+      td {
+        mso-table-lspace: 0pt;
+        mso-table-rspace: 0pt;
+      }
+
+      /* Fix webkit padding */
+      #MessageViewBody a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      /* Platform specific styles - matching your app's colors */
+      .platform-codeforces {
+        background:  #e6f6ff;;
+        color: #0050b3;;
+      }
+      .platform-leetcode {
+        background: #fff7e6;
+        color: #d48809;
+      }
+      .platform-codechef {
+        background: #F5F0EB;
+        color: #3c2e25;;
+      }
+      .platform-atcoder {
+        background: #ff6b6b;
+        color: white;
+      }
+      .platform-default {
+        background: #4a5568;
+        color: white;
+      }
+
+      /* Status badge styles */
+      .status-upcoming {
+        background: #dbeafe;
+        color: #1e40af;
+      }
+
+      /* Main brand colors */
+      .brand-primary {
+        background: #1e293b;
+      }
+      .brand-gradient {
+        background: linear-gradient(135deg, #1e293b, #334155);
+      }
+
+      /* Responsive styles */
+      @media screen and (max-width: 600px) {
+        .email-container {
+          width: 100% !important;
+          margin: auto !important;
+        }
+        .fluid {
+          max-width: 100% !important;
+          height: auto !important;
+          margin-left: auto !important;
+          margin-right: auto !important;
+        }
+        .stack-column,
+        .stack-column-center {
+          display: block !important;
+          width: 100% !important;
+          max-width: 100% !important;
+          direction: ltr !important;
+        }
+        .center-on-narrow {
+          text-align: center !important;
+          display: block !important;
+          margin-left: auto !important;
+          margin-right: auto !important;
+          float: none !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body
+    width="100%"
+    style="
+      margin: 0;
+      padding: 0 !important;
+      mso-line-height-rule: exactly;
+      background-color: #f4f4f4;
+    "
+  >
+    <center style="width: 100%; background-color: #f4f4f4">
+      <!-- Visually Hidden Preheader Text -->
+      <div
+        style="
+          display: none;
+          font-size: 1px;
+          line-height: 1px;
+          max-height: 0px;
+          max-width: 0px;
+          opacity: 0;
+          overflow: hidden;
+          mso-hide: all;
+          font-family: sans-serif;
+        "
+      >
+        Don't miss the {{CONTEST_NAME}} contest starting in {{TIME_UNTIL}}! Get
+        ready to code and compete.
+      </div>
+
+      <!-- Email Body -->
+      <table
+        align="center"
+        role="presentation"
+        cellspacing="0"
+        cellpadding="0"
+        border="0"
+        width="600"
+        style="margin: auto"
+        class="email-container"
+      >
+        <!-- Header -->
+        <tr>
+          <td
+            style="
+              padding: 20px 0;
+              text-align: center;
+              background-color: #ffffff;
+            "
+          >
+            <table
+              role="presentation"
+              cellspacing="0"
+              cellpadding="0"
+              border="0"
+              width="100%"
+            >
+              <tr>
+                <td style="text-align: center">
+                  <div
+                    style="
+                      display: inline-flex;
+                      align-items: center;
+                      justify-content: center;
+                    "
+                  >
+                    <h1
+                      style="
+                        margin: 0;
+                        font-size: 24px;
+                        font-weight: 600;
+                        color: #1e293b;
+                      "
+                    >
+                      <a
+                        href="https://contestracker.me"
+                        target="_blank"
+                        style="text-decoration: none; color: inherit"
+                        >contestracker.me</a
+                      >
+                    </h1>
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!--Hero Section -->
+        <tr>
+          <td style="padding: 0; background-color: #ffffff">
+            <table
+              role="presentation"
+              cellspacing="0"
+              cellpadding="0"
+              border="0"
+              width="100%"
+            >
+              <tr>
+                <td
+                  style="
+                    padding: 40px 40px 30px;
+                    text-align: center;
+                    background: linear-gradient(135deg, #1e293b, #334155);
+                  "
+                >
+                  <h2
+                    style="
+                      margin: 0 0 15px;
+                      font-size: 28px;
+                      line-height: 36px;
+                      color: #ffffff;
+                      font-weight: bold;
+                    "
+                  >
+                    Contest Reminder
+                  </h2>
+                  <p
+                    style="
+                      margin: 0;
+                      font-size: 18px;
+                      line-height: 24px;
+                      color: #ffffff;
+                      opacity: 0.9;
+                    "
+                  >
+                    Your registered contest is starting soon!
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Contest Details Card -->
+        <tr>
+          <td style="padding: 0; background-color: #ffffff">
+            <table
+              role="presentation"
+              cellspacing="0"
+              cellpadding="0"
+              border="0"
+              width="100%"
+            >
+              <tr>
+                <td style="padding: 40px">
+                  <!-- Platform Badge -->
+                  <table
+                    role="presentation"
+                    cellspacing="0"
+                    cellpadding="0"
+                    border="0"
+                    width="100%"
+                    style="margin-bottom: 20px"
+                  >
+                    <tr>
+                      <td>
+                        <div
+                          style="
+                            display: inline-block;
+                            padding: 8px 16px;
+                            border-radius: 20px;
+                            font-size: 12px;
+                            font-weight: bold;
+                            text-transform: uppercase;
+                            letter-spacing: 0.5px;
+                          "
+                          class="platform-{{PLATFORM_CLASS}}"
+                        >
+                          {{PLATFORM_NAME}}
+                        </div>
+                        <div
+                          style="
+                            float: right;
+                            padding: 8px 16px;
+                            background-color: #dbeafe;
+                            border-radius: 20px;
+                            font-size: 12px;
+                            font-weight: bold;
+                            color: #1e40af;
+                            text-transform: uppercase;
+                          "
+                        >
+                          UPCOMING
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
+
+                  <!-- Contest Name -->
+                  <h3
+                    style="
+                      margin: 0 0 20px;
+                      font-size: 24px;
+                      line-height: 32px;
+                      color: #333333;
+                      font-weight: bold;
+                    "
+                  >
+                    {{CONTEST_NAME}}
+                  </h3>
+
+                  <!-- Contest Details -->
+                  <table
+                    role="presentation"
+                    cellspacing="0"
+                    cellpadding="0"
+                    border="0"
+                    width="100%"
+                    style="margin-bottom: 30px"
+                  >
+                    <tr>
+                      <td
+                        style="
+                          padding: 15px 0;
+                          border-bottom: 1px solid #e0e0e0;
+                        "
+                      >
+                        <table
+                          role="presentation"
+                          cellspacing="0"
+                          cellpadding="0"
+                          border="0"
+                          width="100%"
+                        >
+                          <tr>
+                            <td style="width: 30px; vertical-align: top">
+                              <span style="font-size: 16px">📅</span>
+                            </td>
+                            <td style="vertical-align: top">
+                              <strong style="color: #555555; font-size: 14px"
+                                >Start Date & Time</strong
+                              ><br />
+                              <span style="color: #333333; font-size: 16px"
+                                >{{START_DATE}} at {{START_TIME}}</span
+                              >
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        style="
+                          padding: 15px 0;
+                          border-bottom: 1px solid #e0e0e0;
+                        "
+                      >
+                        <table
+                          role="presentation"
+                          cellspacing="0"
+                          cellpadding="0"
+                          border="0"
+                          width="100%"
+                        >
+                          <tr>
+                            <td style="width: 30px; vertical-align: top">
+                              <span style="font-size: 16px">⏱️</span>
+                            </td>
+                            <td style="vertical-align: top">
+                              <strong style="color: #555555; font-size: 14px"
+                                >Duration</strong
+                              ><br />
+                              <span style="color: #333333; font-size: 16px"
+                                >{{DURATION}}</span
+                              >
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 15px 0">
+                        <table
+                          role="presentation"
+                          cellspacing="0"
+                          cellpadding="0"
+                          border="0"
+                          width="100%"
+                        >
+                          <tr>
+                            <td style="width: 30px; vertical-align: top">
+                              <span style="font-size: 16px">⏰</span>
+                            </td>
+                            <td style="vertical-align: top">
+                              <strong style="color: #555555; font-size: 14px"
+                                >Time Remaining</strong
+                              ><br />
+                              <span
+                                style="
+                                  color: #333333;
+                                  font-size: 16px;
+                                  font-weight: bold;
+                                "
+                                >{{TIME_UNTIL}}</span
+                              >
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+
+                  <!-- Call to Action Buttons -->
+                  <table
+                    role="presentation"
+                    cellspacing="0"
+                    cellpadding="0"
+                    border="0"
+                    width="100%"
+                  >
+                    <tr>
+                      <td style="padding: 0">
+                        <!-- Primary CTA -->
+                        <table
+                          role="presentation"
+                          cellspacing="0"
+                          cellpadding="0"
+                          border="0"
+                          style="margin: 0 auto 15px"
+                        >
+                          <tr>
+                            <td
+                              style="
+                                border-radius: 8px;
+                                background: #1e293b;
+                                text-align: center;
+                              "
+                            >
+                              <a
+                                href="{{CONTEST_URL}}"
+                                style="
+                                  background: #1e293b;
+                                  border: none;
+                                  font-family: Inter, Arial, sans-serif;
+                                  font-size: 16px;
+                                  font-weight: 600;
+                                  line-height: 20px;
+                                  color: #ffffff;
+                                  text-decoration: none;
+                                  padding: 15px 30px;
+                                  border-radius: 8px;
+                                  display: inline-block;
+                                "
+                              >
+                                Join Contest Now →
+                              </a>
+                            </td>
+                          </tr>
+                        </table>
+
+                        <!-- Secondary CTA -->
+                        <table
+                          role="presentation"
+                          cellspacing="0"
+                          cellpadding="0"
+                          border="0"
+                          style="margin: 0 auto"
+                        >
+                          <tr>
+                            <td
+                              style="
+                                border-radius: 8px;
+                                border: 2px solid #1e293b;
+                                text-align: center;
+                              "
+                            >
+                              <a
+                                href="{{PLATFORM_URL}}"
+                                style="
+                                  background: transparent;
+                                  border: none;
+                                  font-family: Inter, Arial, sans-serif;
+                                  font-size: 14px;
+                                  font-weight: 600;
+                                  line-height: 18px;
+                                  color: #1e293b;
+                                  text-decoration: none;
+                                  padding: 12px 24px;
+                                  border-radius: 6px;
+                                  display: inline-block;
+                                "
+                              >
+                                Visit {{PLATFORM_NAME}}
+                              </a>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Tips Section -->
+        <tr>
+          <td style="padding: 0; background-color: #f8f9fa">
+            <table
+              role="presentation"
+              cellspacing="0"
+              cellpadding="0"
+              border="0"
+              width="100%"
+            >
+              <tr>
+                <td style="padding: 30px 40px">
+                  <h4
+                    style="
+                      margin: 0 0 15px;
+                      font-size: 18px;
+                      color: #333333;
+                      font-weight: bold;
+                    "
+                  >
+                    📚 Quick Tips for Success
+                  </h4>
+                  <ul
+                    style="
+                      margin: 0;
+                      padding-left: 20px;
+                      color: #555555;
+                      font-size: 14px;
+                      line-height: 22px;
+                    "
+                  >
+                    <li style="margin-bottom: 8px">
+                      Review the contest rules and scoring system
+                    </li>
+                    <li style="margin-bottom: 8px">
+                      Prepare your coding environment and test it beforehand
+                    </li>
+                    <li style="margin-bottom: 8px">
+                      Read all problems first, then prioritize by difficulty
+                    </li>
+                    <li style="margin-bottom: 0">
+                      Stay calm and manage your time effectively
+                    </li>
+                  </ul>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td
+            style="
+              padding: 30px 40px;
+              background-color: #ffffff;
+              border-top: 1px solid #e0e0e0;
+            "
+          >
+            <table
+              role="presentation"
+              cellspacing="0"
+              cellpadding="0"
+              border="0"
+              width="100%"
+            >
+              <tr>
+                <td style="text-align: center">
+                  <p style="margin: 0 0 10px; font-size: 14px; color: #888888">
+                    This reminder was sent from
+                    <a
+                      href="https://contestracker.me"
+                      target="_blank"
+                      style="text-decoration: none; color: inherit"
+                    >
+                      contestracker.me</a
+                    >
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </center>
+  </body>
+</html>
