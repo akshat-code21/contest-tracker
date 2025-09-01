@@ -2,7 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import fs from "node:fs";
 import { getTimeUntil } from "@/lib/parser";
+import clientPromise from "@/lib/mongodb";
 export async function POST(req: NextRequest) {
+  const client = await clientPromise;
+  const db = client.db("contestTracker");
+  const collection = db.collection("reminders");
   const body = await req.json();
   const {
     name,
@@ -27,7 +31,7 @@ export async function POST(req: NextRequest) {
   ) {
     return NextResponse.json(
       { message: "Missing required fields" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -44,7 +48,7 @@ export async function POST(req: NextRequest) {
 
     let emailTemplate = fs.readFileSync(
       process.cwd() + "/public/email.html",
-      "utf-8"
+      "utf-8",
     );
 
     const startDateTime = new Date(startTime);
@@ -81,15 +85,26 @@ export async function POST(req: NextRequest) {
 
     await transporter.sendMail(mailOptions);
 
+    await collection.insertOne({
+      email: email,
+      name: name,
+      startTime,
+      contestName,
+      duration,
+      contestLink,
+      platformName,
+      formattedStartTime : new Date(startTime)
+    });
+
     return NextResponse.json(
       { message: "Email sent successfully" },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Email sending error:", error);
     return NextResponse.json(
       { message: "Failed to send email" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

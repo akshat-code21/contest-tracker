@@ -243,7 +243,7 @@ export default function ContestCard({
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const response = await axios.post(`${baseUrl}/api/reminder`, {
+      const response = await axios.post(`${baseUrl}/reminder`, {
         ...values,
         ...contestSelected
       });
