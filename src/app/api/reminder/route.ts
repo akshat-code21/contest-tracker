@@ -85,6 +85,7 @@ export async function POST(req: NextRequest) {
 
     await transporter.sendMail(mailOptions);
 
+    const startTimeDate = new Date(startTime + " UTC");
     await collection.insertOne({
       email: email,
       name: name,
