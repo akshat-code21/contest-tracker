@@ -94,8 +94,6 @@ export async function POST(req: NextRequest) {
       contestLink,
       platformName,
       formattedStartTime: new Date(startTimeISO),
-      reminderSent: false,
-      createdAt: new Date(),
     });
 
     return NextResponse.json(
