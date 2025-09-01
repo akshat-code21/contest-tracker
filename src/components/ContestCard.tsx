@@ -340,14 +340,17 @@ export default function ContestCard({
                         <ExternalLink className="h-4 w-4" />
                       </Button>
                     </Link>
-                    <Button
-                      variant="outline"
-                      className="flex-1/2 items-center justify-center gap-2 bg-white dark:bg-white dark:text-black dark:hover:text-white dark:hover:bg-black"
-                      onClick={() => handleSendEmail(contest.name, formatDateClient(contest.startTimeISO), contest.startTimeISO, contest.duration, contest.platform, contest.href)}
-                    >
-                      Receive Reminder
-                      <Mail className="h-4 w-4" />
-                    </Button>
+                    {contest.status === "upcoming" && (
+                      <Button
+                        variant="outline"
+                        className="flex-1/2 items-center justify-center gap-2 bg-white dark:bg-white dark:text-black dark:hover:text-white dark:hover:bg-black"
+                        onClick={() => handleSendEmail(contest.name, formatDateClient(contest.startTimeISO), contest.startTimeISO, contest.duration, contest.platform, contest.href)}
+                      >
+                        Receive Reminder
+                        <Mail className="h-4 w-4" />
+                      </Button>
+                    )
+                    }
                   </div>
                   <div className="flex w-full gap-2">
                     <Button
@@ -363,7 +366,7 @@ export default function ContestCard({
                         )}
                       />
                     </Button>
-                    <Button
+                    {youtubeLinks[getContestKey(contest)] && (<Button
                       variant="destructive"
                       className={cn(
                         "flex-1 flex items-center justify-center gap-1 text-xs",
@@ -377,7 +380,7 @@ export default function ContestCard({
                         ? "Watch"
                         : "Add"}
                       <Youtube className="h-4 w-4" />
-                    </Button>
+                    </Button>)}
                   </div>
                 </CardFooter>
               </Card>
