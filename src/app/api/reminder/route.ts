@@ -9,6 +9,7 @@ export async function POST(req: NextRequest) {
   const collection = db.collection("reminders");
   const body = await req.json();
   const {
+    contestId,
     name,
     email,
     contestName,
@@ -19,9 +20,8 @@ export async function POST(req: NextRequest) {
     contestLink,
   } = body;
 
-  console.log("Received body:", body);
-
   if (
+    !contestId ||
     !name ||
     !email ||
     !contestName ||
@@ -34,6 +34,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       { message: "Missing required fields" },
       { status: 400 },
+    );
+  }
+
+  const existing = await collection.findOne({ email, contestId });
+  if (existing) {
+    return NextResponse.json(
+      { message: "You already have a reminder for this contest" },
+      { status: 409 },
     );
   }
 
@@ -84,8 +92,8 @@ export async function POST(req: NextRequest) {
 
     await transporter.sendMail(mailOptions);
 
-    const startTimeDate = new Date(startTime + " UTC");
     await collection.insertOne({
+      contestId,
       email: email,
       name: name,
       startTime,

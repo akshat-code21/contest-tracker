@@ -23,6 +23,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { formatDateClient } from "@/lib/formatDateClient";
 
 export interface SelectedContest {
+  contestId: string;
   contestName: string;
   startTime: string;
   startTimeISO: string; // Raw ISO timestamp for server processing
@@ -228,10 +229,10 @@ export default function ContestCard({
     );
   };
 
-  const handleSendEmail = (contestName: string, startTime: string, startTimeISO: string, duration: string, platformName: string, contestLink: string) => {
+  const handleSendEmail = (contestId: string, contestName: string, startTime: string, startTimeISO: string, duration: string, platformName: string, contestLink: string) => {
     setIsModalOpen(true);
     setContestSelected({
-      contestName, contestLink, startTime, startTimeISO, duration, platformName
+      contestId, contestName, contestLink, startTime, startTimeISO, duration, platformName
     })
   }
 
@@ -254,6 +255,9 @@ export default function ContestCard({
       ...contestSelected
     });
 
+    if (response.status === 409) {
+      throw new Error("You already have a reminder for this contest");
+    }
     if (response.status !== 200) {
       throw new Error("Failed to set reminder");
     }
@@ -344,7 +348,7 @@ export default function ContestCard({
                       <Button
                         variant="outline"
                         className="flex-1/2 items-center justify-center gap-2 bg-white dark:bg-white dark:text-black dark:hover:text-white dark:hover:bg-black"
-                        onClick={() => handleSendEmail(contest.name, formatDateClient(contest.startTimeISO), contest.startTimeISO, contest.duration, contest.platform, contest.href)}
+                        onClick={() => handleSendEmail((contest.id || contest.name).toString(), contest.name, formatDateClient(contest.startTimeISO), contest.startTimeISO, contest.duration, contest.platform, contest.href)}
                       >
                         Receive Reminder
                         <Mail className="h-4 w-4" />

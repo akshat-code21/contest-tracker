@@ -1,79 +1,99 @@
-interface AtCoderContest {
-  id: string;
-  start_epoch_second: number;
-  duration_second: number;
-  title: string;
-  rate_change: string;
+import {
+  fetchUpcomingContests,
+  fetchRecentContests,
+} from "@qatadaazzeh/atcoder-api";
+import { Contest } from "@/types/contest";
+
+function parseDuration(durationStr: string): string {
+  const parts = durationStr.split(":");
+  const hours = parseInt(parts[0], 10);
+  const minutes = parseInt(parts[1], 10);
+  if (minutes > 0) {
+    return `${hours}h ${minutes}m`;
+  }
+  return `${hours} hours`;
+}
+
+function parseDurationSeconds(durationStr: string): number {
+  const parts = durationStr.split(":");
+  const hours = parseInt(parts[0], 10);
+  const minutes = parseInt(parts[1], 10);
+  return hours * 3600 + minutes * 60;
+}
+
+function determineStatus(startTime: Date, endTime: Date): string {
+  const now = new Date();
+  if (now < startTime) return "upcoming";
+  if (now >= startTime && now < endTime) return "ongoing";
+  return "completed";
+}
+
+function formatContest(contest: {
+  contestId: string;
+  contestName: string;
+  contestTime: string;
+  contestDuration: string;
+  contestUrl: string;
+}): Contest | null {
+  const startTime = new Date(contest.contestTime);
+  if (isNaN(startTime.getTime())) return null;
+
+  const durationSeconds = parseDurationSeconds(contest.contestDuration);
+  const endTime = new Date(startTime.getTime() + durationSeconds * 1000);
+  const status = determineStatus(startTime, endTime);
+  const isoDate = startTime.toISOString();
+
+  return {
+    id: contest.contestId,
+    platform: "AtCoder",
+    status,
+    name: contest.contestName,
+    startTime: isoDate,
+    startTimeISO: isoDate,
+    duration: parseDuration(contest.contestDuration),
+    href: contest.contestUrl,
+  };
 }
 
 export async function GET() {
   try {
-    const response = await fetch(
-      "https://kenkoooo.com/atcoder/resources/contests.json"
-    );
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    const [upcoming, recent] = await Promise.all([
+      fetchUpcomingContests(),
+      fetchRecentContests(),
+    ]);
+
+    const formattedContests: Contest[] = [];
+
+    for (const contest of upcoming) {
+      const formatted = formatContest(contest);
+      if (formatted) formattedContests.push(formatted);
     }
-    const data = await response.json();
 
-    const now = Math.floor(Date.now() / 1000);
-
-    const formattedContests = data.map((contest: AtCoderContest) => {
-      const start = contest.start_epoch_second;
-      const end = start + contest.duration_second;
-
-      let status: string;
-      if (now < start) {
-        status = "upcoming";
-      } else if (now >= start && now < end) {
-        status = "ongoing";
-      } else {
-        status = "completed";
-      }
-
-      const durationHours = Math.floor(contest.duration_second / 3600);
-      const durationMinutes = Math.floor(
-        (contest.duration_second % 3600) / 60
-      );
-      const duration =
-        durationMinutes > 0
-          ? `${durationHours}h ${durationMinutes}m`
-          : `${durationHours} hours`;
-
-      const isoDate = new Date(contest.start_epoch_second * 1000).toISOString();
-
-      return {
-        id: contest.id,
-        platform: "AtCoder",
-        status,
-        name: contest.title,
-        startTime: isoDate,
-        startTimeISO: isoDate,
-        duration,
-        href: `https://atcoder.jp/contests/${contest.id}?lang=en`,
-      };
-    });
+    for (const contest of recent) {
+      const formatted = formatContest(contest);
+      if (formatted) formattedContests.push(formatted);
+    }
 
     const sortedUpcoming = formattedContests
-      .filter((c: any) => c.status === "upcoming")
+      .filter((c) => c.status === "upcoming")
       .sort(
-        (a: any, b: any) =>
+        (a, b) =>
           new Date(a.startTimeISO).getTime() -
           new Date(b.startTimeISO).getTime()
       );
 
     const sortedOngoing = formattedContests
-      .filter((c: any) => c.status === "ongoing")
+      .filter((c) => c.status === "ongoing")
       .sort(
-        (a: any, b: any) =>
+        (a, b) =>
           new Date(a.startTimeISO).getTime() -
           new Date(b.startTimeISO).getTime()
       );
 
     const sortedCompleted = formattedContests
-      .filter((c: any) => c.status === "completed")
+      .filter((c) => c.status === "completed")
       .sort(
-        (a: any, b: any) =>
+        (a, b) =>
           new Date(a.startTimeISO).getTime() -
           new Date(b.startTimeISO).getTime()
       );

@@ -45,6 +45,7 @@ export default function EmailPopover({
             setIsModalOpen(false);
             form.reset();
             setContestSelected({
+                contestId: "",
                 contestName: "",
                 duration: "",
                 contestLink: "",
@@ -52,8 +53,9 @@ export default function EmailPopover({
                 startTime: "",
                 startTimeISO: ""
             });
-        } catch {
-            toast.error("Failed to set reminder. Please try again.");
+        } catch (error) {
+            const message = error instanceof Error ? error.message : "Failed to set reminder. Please try again.";
+            toast.error(message);
         }
     };
 
