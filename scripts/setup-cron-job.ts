@@ -27,11 +27,15 @@ async function main() {
     process.exit(1);
   }
 
-  const baseUrl = process.argv[2];
+  let baseUrl = process.argv[2];
   if (!baseUrl) {
     console.error("Usage: npx tsx scripts/setup-cron-job.ts <DEPLOYED_URL>");
     console.error("Example: npx tsx scripts/setup-cron-job.ts https://contesttracker.vercel.app");
     process.exit(1);
+  }
+
+  if (!/^https?:\/\//i.test(baseUrl)) {
+    baseUrl = `https://${baseUrl}`;
   }
 
   const url = `${baseUrl.replace(/\/$/, "")}/api/send-contest-reminders`;
@@ -63,7 +67,7 @@ async function main() {
   const listRes = await fetch(`${API_ENDPOINT}/jobs`, { headers });
 
   if (!listRes.ok) {
-    console.error("Failed to list jobs:", await listRes.text());
+    console.error(`Failed to list jobs (${listRes.status}):`, await listRes.text());
     process.exit(1);
   }
 
@@ -82,7 +86,7 @@ async function main() {
     });
 
     if (!updateRes.ok) {
-      console.error("Failed to update job:", await updateRes.text());
+      console.error(`Failed to update job (${updateRes.status}):`, await updateRes.text());
       process.exit(1);
     }
 
@@ -96,7 +100,7 @@ async function main() {
     });
 
     if (!createRes.ok) {
-      console.error("Failed to create job:", await createRes.text());
+      console.error(`Failed to create job (${createRes.status}):`, await createRes.text());
       process.exit(1);
     }
 
