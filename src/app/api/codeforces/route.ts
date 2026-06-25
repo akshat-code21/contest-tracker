@@ -36,7 +36,7 @@ export async function GET() {
       const isoDate = new Date(contest.startTimeSeconds * 1000).toISOString();
       return {
         id: contest.id,
-        platform: "CodeForces",
+        platform: "Codeforces",
         status: status,
         name: contest.name,
         startTime: isoDate,
