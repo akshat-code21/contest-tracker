@@ -7,9 +7,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Youtube,
   Link,
-  CalendarDays,
-  User,
-  BookOpen,
   ArrowLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -52,7 +49,7 @@ const UploadForm = () => {
   const router = useRouter();
   const [contests, setContests] = useState<Contest[]>([]);
   const [selectedContestId, setSelectedContestId] = useState<string>("");
-  
+
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
     const contestId = searchParams.get('contestId');
@@ -60,7 +57,7 @@ const UploadForm = () => {
       setSelectedContestId(contestId);
       form.setValue('contestId', contestId);
     }
-    
+
     const fetchContests = async () => {
       try {
         const response = await fetch(`${baseUrl}/contests`);
@@ -88,12 +85,16 @@ const UploadForm = () => {
 
   const onSubmit = async (data: FormValues) => {
     try {
+      const selectedContest = contests.find(c => c.id === data.contestId || c.name === data.contestId);
+      const platform = selectedContest?.platform?.toLowerCase() || "";
+
       await fetch(`${baseUrl}/youtube`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          platform,
           contestId: data.contestId,
           youtubeUrl: data.youtubeUrl,
         }),
@@ -124,7 +125,7 @@ const UploadForm = () => {
             </div>
             <CardTitle className="text-2xl md:text-3xl">
               Upload YouTube Video
-            </CardTitle>           
+            </CardTitle>
           </CardHeader>
 
           <CardContent className="pt-6">

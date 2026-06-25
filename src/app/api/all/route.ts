@@ -7,27 +7,29 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const page = parseInt(searchParams.get("page") || "1");
   let contests: Contest[] = [];
-  const [codechefData, codeforcesData, leetcodeData] = await Promise.all([
-    fetch(`${baseUrl}/codechef`).then((res) => res.json()),
-    fetch(`${baseUrl}/codeforces`).then((res) => res.json()),
-    fetch(`${baseUrl}/leetcode`, {
-      cache: "no-store",
-      headers: {
-        "Cache-Control": "no-cache",
-      },
-    })
-      .then((res) => res.json())
-      .catch((err) => {
-        console.log(err);
-      }),
-  ]);
+  const [codechefData, codeforcesData, leetcodeData, atcoderData] =
+    await Promise.all([
+      fetch(`${baseUrl}/codechef`).then((res) => res.json()),
+      fetch(`${baseUrl}/codeforces`).then((res) => res.json()),
+      fetch(`${baseUrl}/leetcode`, {
+        cache: "no-store",
+        headers: {
+          "Cache-Control": "no-cache",
+        },
+      })
+        .then((res) => res.json())
+        .catch((err) => {
+          console.log(err);
+        }),
+      fetch(`${baseUrl}/atcoder`).then((res) => res.json()),
+    ]);
 
   contests = [
     ...(Array.isArray(codechefData) ? codechefData : []),
     ...(Array.isArray(codeforcesData) ? codeforcesData : []),
     ...(Array.isArray(leetcodeData) ? leetcodeData : []),
+    ...(Array.isArray(atcoderData) ? atcoderData : []),
   ];
-  // console.log(typeof contests[0].startTime);
   const x = contests
     .filter((contest) => contest.status === "upcoming")
     .sort((a, b) => {

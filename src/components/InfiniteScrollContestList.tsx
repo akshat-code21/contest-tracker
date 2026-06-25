@@ -114,9 +114,11 @@ export default function InfiniteScrollContestList({
   }, [platform, searchQuery, isBookmarksPage]);
 
   useEffect(() => {
+    const abortController = new AbortController();
     if (initialLoading) {
       fetchContests(1, true);
     }
+    return () => abortController.abort();
   }, [fetchContests, initialLoading]);
 
   useEffect(() => {
@@ -190,16 +192,16 @@ export default function InfiniteScrollContestList({
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full" aria-live="polite" aria-atomic="false">
       <ContestCard
         contests={contests}
         isBookmarksPage={isBookmarksPage}
         bookmarkedContestIds={bookmarkedContestIds}
       />
 
-      <div ref={loadMoreRef} className="flex justify-center items-center py-8">
+      <div ref={loadMoreRef} className="flex justify-center items-center py-8" aria-live="polite">
         {loading && (
-          <div className="flex items-center">
+          <div className="flex items-center" role="status">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-white"></div>
             <span className="ml-2 text-gray-600 dark:text-gray-400">Loading more contests...</span>
           </div>

@@ -13,7 +13,8 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Dispatch, SetStateAction } from "react"
-import { Flag, X } from "lucide-react"
+import { X } from "lucide-react"
+import { toast } from "sonner"
 import { SelectedContest } from "./ContestCard"
 
 const formSchema = z.object({
@@ -39,26 +40,46 @@ export default function EmailPopover({
     setContestSelected
 }: EmailPopoverProps) {
     const handleSubmit = async (values: FormData) => {
-        await onSubmit(values);
-        setIsModalOpen(false);
-        form.reset();
-        setContestSelected({
-            contestName: "",
-            duration: "",
-            contestLink: "",
-            platformName: "",
-            startTime: "",
-            startTimeISO: ""
-        });
+        try {
+            await onSubmit(values);
+            setIsModalOpen(false);
+            form.reset();
+            setContestSelected({
+                contestName: "",
+                duration: "",
+                contestLink: "",
+                platformName: "",
+                startTime: "",
+                startTimeISO: ""
+            });
+        } catch {
+            toast.error("Failed to set reminder. Please try again.");
+        }
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === "Escape") {
+            setIsModalOpen(false);
+        }
     };
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-96 relative">
+        <div
+            className="fixed inset-0 flex items-center justify-center bg-black/50 z-50"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Set Email Reminder"
+            onClick={() => setIsModalOpen(false)}
+            onKeyDown={handleKeyDown}
+        >
+            <div
+                className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-96 relative"
+                onClick={(e) => e.stopPropagation()}
+            >
                 <div className="text-lg font-semibold mb-4">
                     <div className="flex items-center justify-between">
                         Set Email Reminder
-                        <Button variant={"ghost"} onClick={() => setIsModalOpen(false)}>
+                        <Button variant={"ghost"} onClick={() => setIsModalOpen(false)} aria-label="Close">
                             <X size={20} />
                         </Button>
                     </div>

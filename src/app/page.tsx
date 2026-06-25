@@ -12,11 +12,10 @@ export const metadata: Metadata = {
 };
 
 type PageProps = {
-  params: Promise<Record<string, never>>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
-export default async function Home({ params, searchParams }: PageProps) {
+export default async function Home({ searchParams }: PageProps) {
   const searchParamsResolved = await searchParams;
   const platform = searchParamsResolved?.platform?.toString().toLowerCase() || "";
   const searchQuery = searchParamsResolved?.contest?.toString() || "";
@@ -25,7 +24,7 @@ export default async function Home({ params, searchParams }: PageProps) {
   return (
     <div className="font-[family-name:var(--font-geist-sans)] min-h-screen">
       <div className="my-8 sm:my-12">
-        <div className="relative max-w-5xl mx-auto px-4">
+        <div className="relative max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between">
             <Header />
             <ToggleTheme />

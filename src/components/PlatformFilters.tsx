@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { Bookmark, FileCode, Globe, icons, Youtube } from "lucide-react";
+import { Bookmark, Globe, Youtube } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Button } from "./ui/button";
@@ -41,6 +41,11 @@ export default function PlatformFilters() {
       className: "bg-cc-secondary text-cc-primary",
     },
     {
+      icon: "AC",
+      title: "AtCoder",
+      className: "bg-ac-secondary text-ac-primary",
+    },
+    {
       icon: <Bookmark size={14} color="lightblue" />,
       title: "Bookmarks",
       className: "bg-primary text-white",
@@ -63,6 +68,8 @@ export default function PlatformFilters() {
         return "bg-cc text-cc-secondary";
       case "leetcode":
         return "bg-lc text-lc-secondary";
+      case "atcoder":
+        return "bg-ac text-ac-secondary";
       default:
         return "bg-icon text-white";
     }
@@ -75,6 +82,8 @@ export default function PlatformFilters() {
         return "bg-cc-secondary text-cc-primary";
       case "leetcode":
         return "bg-lc-secondary text-lc-primary";
+      case "atcoder":
+        return "bg-ac-secondary text-ac-primary";
       default:
         return "bg-inactive text-icon";
     }
@@ -111,10 +120,9 @@ export default function PlatformFilters() {
             <Link
               className={cn(
                 `cursor-pointer flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full border border-transparent whitespace-nowrap ${button.className}`,
-                `${
-                  isActive(button.title.toLowerCase())
-                    ? `${fetchActiveStyles(button.title.toLowerCase())}`
-                    : `${fetchInActiveStyles(button.title.toLowerCase())}`
+                `${isActive(button.title.toLowerCase())
+                  ? `${fetchActiveStyles(button.title.toLowerCase())}`
+                  : `${fetchInActiveStyles(button.title.toLowerCase())}`
                 }`
               )}
               href={href}
@@ -126,6 +134,7 @@ export default function PlatformFilters() {
           </div>
         );
       })}
+
       <Button
         onClick={() => {
           router.push("/form");

@@ -3,11 +3,13 @@ import { baseUrl } from "@/lib/constant";
 export async function GET() {
   try {
 
-    const [codechefData, codeforcesData, leetcodeData] = await Promise.all([
-      fetch(`${baseUrl}/codechef`).then((res) => res.json()),
-      fetch(`${baseUrl}/codeforces`).then((res) => res.json()),
-      fetch(`${baseUrl}/leetcode`).then((res) => res.json()),
-    ]);
+    const [codechefData, codeforcesData, leetcodeData, atcoderData] =
+      await Promise.all([
+        fetch(`${baseUrl}/codechef`).then((res) => res.json()),
+        fetch(`${baseUrl}/codeforces`).then((res) => res.json()),
+        fetch(`${baseUrl}/leetcode`).then((res) => res.json()),
+        fetch(`${baseUrl}/atcoder`).then((res) => res.json()),
+      ]);
 
     const sortByStartTime = (a: Contest, b: Contest) =>
       new Date(a.startTimeISO).getTime() - new Date(b.startTimeISO).getTime();
@@ -15,11 +17,13 @@ export async function GET() {
     const sortedCodechef = codechefData.sort(sortByStartTime);
     const sortedCodeforces = codeforcesData.sort(sortByStartTime);
     const sortedLeetcode = leetcodeData.sort(sortByStartTime);
+    const sortedAtcoder = atcoderData.sort(sortByStartTime);
 
     const allContests: Contest[] = [
       ...sortedCodechef,
       ...sortedCodeforces,
       ...sortedLeetcode,
+      ...sortedAtcoder,
     ];
 
     return Response.json(allContests);

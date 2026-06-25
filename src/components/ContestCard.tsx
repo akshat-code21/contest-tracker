@@ -7,7 +7,7 @@ import {
   CardFooter,
   CardDescription,
 } from "./ui/card";
-import { Bookmark, Calendar, Clock, CloudCog, Mail, Youtube } from "lucide-react";
+import { Bookmark, Calendar, Clock, Mail, Youtube } from "lucide-react";
 import { Button } from "./ui/button";
 import { ExternalLink } from "lucide-react";
 import { Contest } from "@/types/contest";
@@ -16,6 +16,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import EmailPopover from "./EmailPopover";
+import { toast } from "sonner";
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -91,6 +92,8 @@ export default function ContestCard({
         return "bg-cc-secondary text-cc-primary";
       case "leetcode":
         return "bg-lc-secondary text-lc-primary";
+      case "atcoder":
+        return "bg-ac-secondary text-ac-primary";
       default:
         return "bg-gray-200 text-gray-700";
     }
@@ -103,6 +106,8 @@ export default function ContestCard({
         return "bg-cc-primary";
       case "leetcode":
         return "bg-lc-primary";
+      case "atcoder":
+        return "bg-ac-primary";
       default:
         return "bg-gray-200 ";
     }
@@ -143,6 +148,7 @@ export default function ContestCard({
       }
     } catch (error) {
       console.error("Error handling bookmark:", error);
+      toast.error("Failed to update bookmark. Please try again.");
     }
   };
 
@@ -159,8 +165,6 @@ export default function ContestCard({
   };
 
   const getContestKey = (contest: Contest): string => {
-    // console.log("Getting contest key for:", contest.name, contest.id);
-
     let contestKey = "";
     switch (contest.platform.toLowerCase()) {
       case "codechef":
@@ -202,11 +206,12 @@ export default function ContestCard({
           }
         }
         break;
+      case "atcoder":
+        contestKey = (contest.id || contest.name).toString().toLowerCase();
+        break;
       default:
         contestKey = (contest.id || contest.name).toString();
     }
-
-    // console.log("Generated contest key:", contestKey);
     return contestKey;
   };
 
@@ -244,17 +249,13 @@ export default function ContestCard({
   })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      const response = await axios.post(`${baseUrl}/reminder`, {
-        ...values,
-        ...contestSelected
-      });
+    const response = await axios.post(`${baseUrl}/reminder`, {
+      ...values,
+      ...contestSelected
+    });
 
-      if (response.status === 200) {
-        console.log("Email reminder set successfully");
-      }
-    } catch (error) {
-      console.error("Error sending reminder:", error);
+    if (response.status !== 200) {
+      throw new Error("Failed to set reminder");
     }
   }
 
@@ -327,19 +328,18 @@ export default function ContestCard({
                 </CardHeader>
                 <CardFooter className="w-full flex flex-col gap-2">
                   <div className="flex w-full gap-2">
-                    <Link
+                    <a
                       href={contest.href}
                       target="_blank"
-                      className="flex-1/2"
+                      rel="noopener noreferrer"
+                      className={cn(
+                        "flex-1/2 inline-flex items-center justify-center gap-2 rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap",
+                        "dark:bg-white dark:text-black dark:hover:text-white dark:hover:bg-black"
+                      )}
                     >
-                      <Button
-                        variant="outline"
-                        className="w-full flex items-center justify-center gap-2 bg-white dark:bg-white dark:text-black dark:hover:text-white dark:hover:bg-black"
-                      >
-                        Visit {contest.platform}
-                        <ExternalLink className="h-4 w-4" />
-                      </Button>
-                    </Link>
+                      Visit {contest.platform}
+                      <ExternalLink className="h-4 w-4" />
+                    </a>
                     {contest.status === "upcoming" && (
                       <Button
                         variant="outline"
